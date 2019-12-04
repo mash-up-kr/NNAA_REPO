@@ -3,13 +3,12 @@ package com.na.backend.entity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.Id;
 
 @Setter
 @Getter
-public class Question {
+public class QuestionMessage {
 
     @Id
     private String id;
@@ -23,7 +22,7 @@ public class Question {
     private String choices;
 
     @Builder
-    public Question(String content, String category, String type, String choices){
+    public QuestionMessage(String content, String category, String type, String choices){
         this.content = content;
         this.category = category;
         this.type = type;
