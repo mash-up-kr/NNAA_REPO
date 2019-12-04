@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReceiveQuestionMessageDto {
+public class ReceiverQuestionMessageDto {
 
     private String category;
     private String type;

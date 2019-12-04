@@ -13,5 +13,6 @@ public interface QuestionRepository extends MongoRepository<Question, String> {
 
     Optional<List<Question>> findByCategoryAndType(String category, String type);
     Question insert(NewQuestionDto newQuestionDto);
-    Optional<List<Question>> findByIds(List<String> ids);
+    Optional<List<Question>> findQuestionsByIdIn(List<String> ids);
+
 }

@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.Id;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Setter
 @Getter
@@ -13,32 +16,38 @@ public class QuestionMessage {
     @Id
     private String id;
 
-    private String content;
+    private String senderId;
 
-    private String category;
+    private String receiverId;
 
-    private String type;
+    private List<String> questions;
 
-    private String choices;
+    private LocalDateTime senderTime;
+    private LocalDateTime receiverTime;
 
     @Builder
-    public QuestionMessage(String content, String category, String type, String choices){
-        this.content = content;
-        this.category = category;
-        this.type = type;
-        this.choices = choices;
+    public QuestionMessage(String senderId,
+                           String receiverId,
+                           List<String> questions,
+                           LocalDateTime senderTime,
+                           LocalDateTime receiverTime){
+        this.senderId = senderId;
+        this.receiverId = receiverId;
+        this.questions = questions;
+        this.senderTime = senderTime;
+        this.receiverTime = receiverTime;
     }
-
 
 
     @Override
     public String toString() {
-        return "Question{" +
+        return "QuestionMessage{" +
                 "id='" + id + '\'' +
-                ", content='" + content + '\'' +
-                ", category='" + category + '\'' +
-                ", type='" + type + '\'' +
-                ", choices='" + choices + '\'' +
+                ", sender='" + senderId + '\'' +
+                ", receiver='" + receiverId + '\'' +
+                ", questions=" + questions +
+                ", senderTime=" + senderTime +
+                ", receiverTime=" + receiverTime +
                 '}';
     }
 }
