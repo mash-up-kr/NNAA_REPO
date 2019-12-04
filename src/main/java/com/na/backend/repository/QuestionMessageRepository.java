@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface QuestionRepository extends MongoRepository<Question, String> {
+public interface QuestionMessageRepository extends MongoRepository<Question, String> {
 
     Optional<List<Question>> findByCategoryAndType(String category, String type);
     Question insert(NewQuestionDto newQuestionDto);
