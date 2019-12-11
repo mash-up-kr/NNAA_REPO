@@ -18,7 +18,6 @@ public class UserEntity {
     @Id
     private String id;
 
-
     private String email;
 
 
@@ -39,10 +38,12 @@ public class UserEntity {
     }
 
     @Builder
-    public UserEntity(String email, List<String> bookmark){
+    public UserEntity(String email, List<String> bookmark, String password, String token){
 
         this.email = email;
         this.bookmark= bookmark;
+        this.password = password;
+        this.token = token;
 
     }
 

@@ -1,9 +1,6 @@
 package com.na.backend.controller;
 
-import com.na.backend.dto.NewQuestionDto;
-import com.na.backend.dto.QuestionDto;
-import com.na.backend.dto.QuestionnaireDto;
-import com.na.backend.dto.UserDto;
+import com.na.backend.dto.*;
 import com.na.backend.entity.Question;
 import com.na.backend.service.QuestionService;
 import io.swagger.annotations.Api;
@@ -71,7 +68,7 @@ public class QuestionController {
         QuestionnaireDto questionnaireDto =questionService.getQuestionnaire(questionnaireId);
         return ResponseEntity.status(HttpStatus.OK).body(questionnaireDto);
     }
-    
+
     //7
     @ApiOperation(value = "응답하기", notes = "질문지에 응답하기")
     @PutMapping("/answer/{questionnaireId}")
@@ -81,30 +78,42 @@ public class QuestionController {
         //return ResponseEntity.status(HttpStatus.OK).body(questionnaireDto);
 
     }
+
     //8
     @ApiOperation(value = "즐겨찾기해둔 질문들 보여주기 ", notes = "질문 고를때 즐겨찾기 질문들 보여주기 ")
     @GetMapping("/bookmark")
-    public ResponseEntity<List<QuestionDto>> getBookmarkList() {
+    public ResponseEntity<List<BookmarkedQuestionDto>> getBookmarkList() {
+
+        /*
         String userId = ""; // 토큰으로부터 user_id 가져오기
         List<QuestionDto> likedQuestions = questionService.getHeartedQuestionList(userId);
         return ResponseEntity.status(HttpStatus.OK).body(likedQuestions);
+         */
+
+        String token = "";
+        List<BookmarkedQuestionDto> bookmarkList = questionService.getBookmarkList(token);
+        return ResponseEntity.status(HttpStatus.OK).body(bookmarkList);
+
     }
 
 
-    //9 좋아요 등록하기
-    @ApiOperation(value = "좋아요 등록", notes = "좋아요 등록하기 ")
+    //9
+    @ApiOperation(value = "즐겨찾기 등록", notes = "질문 즐겨찾기 등록하기 ")
     @PostMapping("/bookmark/{questionId}")
-    public void addBookmark( String token,@PathVariable String questionId) {
-
+    public void addBookmark(@PathVariable String questionId) {
+        String token = "";
+        //유저 토큰, 등록할 질문 번호
         questionService.addBookmark(token,questionId);
 
     }
+
     //10
-    @ApiOperation(value = "좋아요 취소", notes = "좋아요 취소하기 ")
-    @DeleteMapping("/heart/{questionId}")
-    public void removeHeart(@PathVariable Integer questionId){
-
-
+    @ApiOperation(value = "즐겨찾기 취소", notes = "질문 즐겨찾기 취소하기 ")
+    @DeleteMapping("/bookmark/{questionId}")
+    public void removeHeart(@PathVariable String questionId){
+        String token = "";
+        //유저 토큰, 등록취소 할 질문번호
+        questionService.removeBookmark(token,questionId);
     }
 
 }

@@ -16,7 +16,6 @@ public class UserDto {
     private String email;
     private String password;
     private String token;
-
     private List<String> bookmark;
 
 
@@ -29,14 +28,13 @@ public class UserDto {
     }
 
     @Builder
-    public UserDto(String email, List<String> bookmark){
+    public UserDto(String email, List<String> bookmark,String password, String token){
         this.email = email;
         this.bookmark = bookmark;
+        this.password = password;
+        this.token = token;
 
     }
-
-
-
 
 
 }

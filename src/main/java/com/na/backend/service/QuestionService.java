@@ -1,8 +1,6 @@
 package com.na.backend.service;
 
-import com.na.backend.dto.NewQuestionDto;
-import com.na.backend.dto.QuestionDto;
-import com.na.backend.dto.QuestionnaireDto;
+import com.na.backend.dto.*;
 import com.na.backend.entity.Question;
 import com.na.backend.entity.Questionnaire;
 import com.na.backend.entity.UserEntity;
@@ -15,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class QuestionService {
@@ -54,6 +53,8 @@ public class QuestionService {
         return questionRepository.insert(newQuestionDto);
     }
 
+    /*
+    밑에 getBookmarkList 부분
     // postgresql 로..
     public List<QuestionDto> getHeartedQuestionList(String userId) {
         // mongodb로 하려면..
@@ -70,7 +71,7 @@ public class QuestionService {
 
         return compactResult;
     }
-
+    */
     public QuestionnaireDto getQuestionnaire(Integer questionnaireId) {
 
         List<Questionnaire> list =  qustionnairRepository.findAll();
@@ -81,7 +82,9 @@ public class QuestionService {
     public void insertAnswer(QuestionnaireDto questionnaireDto) {
 
        Questionnaire questionnaire=  Questionnaire.builder()
-               .sender(questionnaireDto.getSender()).receiver(questionnaireDto.getReceiver()).questions(questionnaireDto.getQuestions()).build();
+               .sender(questionnaireDto.getSender())
+               .receiver(questionnaireDto.getReceiver())
+               .questions(questionnaireDto.getQuestions()).build();
 
         qustionnairRepository.save(questionnaire);
 
@@ -101,5 +104,39 @@ public class QuestionService {
     }
 
 
+    public void removeBookmark(String token, String questionId) {
 
+        // 유저를 토큰으로먼저 찾는다
+        UserEntity user = userRepository.findByToken(token);
+        // 그 유저의 즐찾 배열을 찾는다
+        List<String> bookmarks = user.getBookmark();
+        // 그 배열에 질문을 삭제
+        bookmarks.remove(questionId);
+        //유저정보 업데이트
+        userRepository.save(user);
+
+    }
+
+    public List<BookmarkedQuestionDto> getBookmarkList(String token) {
+
+        // 북마크 질문 dto 리스트
+        List<BookmarkedQuestionDto> list =null;
+        // 유저를 토큰으로 먼저 찾는다
+        UserEntity user = userRepository.findByToken(token);
+        // 그 유저의 즐찾 배열을 찾는다
+        List<String> bookmarks = user.getBookmark();
+
+        // 그 즐찾 배열에 있는 id 값으로 질문 content 가져오기
+        for(int i=0;i<bookmarks.size();i++){
+            String content = questionRepository.findById(bookmarks.get(i)).get().getContent();
+            //dto에 옮겨 담기
+            BookmarkedQuestionDto bookmarkedQuestionDto = new BookmarkedQuestionDto(content);
+            //dto를 리스트에 추가
+            list.add(bookmarkedQuestionDto);
+
+        }
+
+        return list;
+
+    }
 }
