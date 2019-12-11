@@ -97,7 +97,6 @@ public class QuestionController {
 
         questionService.addBookmark(token,questionId);
 
-
     }
 
     @ApiOperation(value = "좋아요 취소", notes = "좋아요 취소하기 ")

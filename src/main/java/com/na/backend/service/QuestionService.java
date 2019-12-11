@@ -82,13 +82,12 @@ public class QuestionService {
 
        Questionnaire questionnaire=  Questionnaire.builder()
                .sender(questionnaireDto.getSender()).receiver(questionnaireDto.getReceiver()).questions(questionnaireDto.getQuestions()).build();
-       
+
         qustionnairRepository.save(questionnaire);
 
     }
 
     public void addBookmark(String token,String questionId) {
-
 
         // 유저를 토큰으로먼저 찾는다
         UserEntity user = userRepository.findByToken(token);
