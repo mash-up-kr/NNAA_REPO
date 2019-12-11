@@ -84,7 +84,7 @@ public class QuestionService {
                .sender(questionnaireDto.getSender()).receiver(questionnaireDto.getReceiver()).questions(questionnaireDto.getQuestions()).build();
 
         qustionnairRepository.save(questionnaire);
-        //QuestionnaireDto.builder()
+       
     }
 
     public void addBookmark(String token,String questionId) {
@@ -92,13 +92,10 @@ public class QuestionService {
 
         // 유저를 토큰으로먼저 찾는다
         UserEntity user = userRepository.findByToken(token);
-
-        // 그 유저의 즐찾 배열을 찾느다
+        // 그 유저의 즐찾 배열을 찾는다
         List<String> bookmarks = user.getBookmark();
-
         // 그 배열에 질문을 추가한다
         bookmarks.add(questionId);
-
         //유저정보 업데이트
         userRepository.save(user);
 

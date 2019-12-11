@@ -2,6 +2,7 @@ package com.na.backend.controller;
 
 import com.na.backend.dto.NewQuestionDto;
 import com.na.backend.dto.QuestionDto;
+import com.na.backend.dto.QuestionnaireDto;
 import com.na.backend.dto.UserDto;
 import com.na.backend.entity.Question;
 import com.na.backend.service.QuestionService;
@@ -28,7 +29,9 @@ public class QuestionController {
     @ApiOperation(value = "질문 입력하기", notes = "질문등록하기 ")
     @PostMapping
     public ResponseEntity<Question> insertQuestion(@RequestBody NewQuestionDto newQuestionDto){
+
         Question newQuestion = questionService.insertNewQuestion(newQuestionDto);
+
         return ResponseEntity.status(HttpStatus.OK).body(newQuestion);
     }
 
@@ -58,28 +61,42 @@ public class QuestionController {
     public void getSenderQuestionnaireList(@PathVariable Integer senderId) {
 
     }
-
+    //
     @ApiOperation(value = "응답자가 질문지 리스트 보기", notes = "질문지 리스트 보기")
     @GetMapping("/receiver/{receiverId}/list")
     public void getReceiverQuestionnaireList(@PathVariable Integer receiverId) {
 
     }
 
+    //
     @ApiOperation(value = "질문지 보기", notes = "질문지 하나만 보기! / 답변 보기 / 보관함에서 보기")
     @GetMapping("/list/{questionnaireId}")
-    public void getQuestionnaire(@PathVariable Integer questionnaireId) {
+    public ResponseEntity<QuestionnaireDto> getQuestionnaire(@PathVariable Integer questionnaireId) {
 
+        QuestionnaireDto questionnaireDto =questionService.getQuestionnaire(questionnaireId);
+        return ResponseEntity.status(HttpStatus.OK).body(questionnaireDto);
     }
 
+
+
+    //7 응답 결과 넣기
     @ApiOperation(value = "응답하기", notes = "질문지에 응답하기")
     @PutMapping("/answer/{questionnaireId}")
-    public void answerQuestion(@PathVariable Integer questionnaireId) {
+    public void answerQuestion(@PathVariable Integer questionnaireId ,@RequestBody QuestionnaireDto questionnaireDto ) {
+
+        questionService.insertAnswer(questionnaireDto);
+        //return ResponseEntity.status(HttpStatus.OK).body(questionnaireDto);
 
     }
 
+
+    //8 좋아요 등록하기
     @ApiOperation(value = "좋아요 등록", notes = "좋아요 등록하기 ")
-    @PostMapping("/heart/{questionId}")
-    public void addHeart(@PathVariable Integer questionId) {
+    @PostMapping("/bookmark/{questionId}")
+    public void addBookmark( String token,@PathVariable String questionId) {
+
+        questionService.addBookmark(token,questionId);
+
 
     }
 

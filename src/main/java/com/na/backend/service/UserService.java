@@ -16,9 +16,9 @@ public class UserService {
 
 
     @Transactional
-    public String save(UserDto userDto){
+    public void save(UserDto userDto){
 
-        return userRepository.save(userDto.toEntity()).getToken();
+        //return userRepository.save(userDto.toEntity()).getToken();
     }
 
 }

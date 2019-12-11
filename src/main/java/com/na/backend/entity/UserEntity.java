@@ -1,30 +1,34 @@
 package com.na.backend.entity;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.*;
+import java.util.List;
 
 
-@Table(name = "user")
+@Document(collection = "user")
 @NoArgsConstructor
 @Getter
-@Entity
+@Setter
 public class UserEntity {
-    @Id
-    @GeneratedValue
-    private Long id;
 
-    @Column(nullable=false)
+
+
+    @Id
+    private String id;
+
+
     private String email;
 
-    @Column(nullable=false)
+
     private String password;
 
-    @Column(nullable=false)
+
     private String token;
+
+
+    private List<String> bookmark;
 
     @Builder
     public UserEntity(String email, String password, String token){
@@ -33,5 +37,14 @@ public class UserEntity {
         this.token = token;
 
     }
+
+    @Builder
+    public UserEntity(String email, List<String> bookmark){
+
+        this.email = email;
+        this.bookmark= bookmark;
+
+    }
+
 
 }

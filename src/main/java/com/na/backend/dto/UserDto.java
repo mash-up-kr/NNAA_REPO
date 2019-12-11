@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -14,6 +16,8 @@ public class UserDto {
     private String email;
     private String password;
     private String token;
+
+    private List<String> bookmark;
 
 
     @Builder
@@ -24,14 +28,15 @@ public class UserDto {
 
     }
 
+    @Builder
+    public UserDto(String email, List<String> bookmark){
+        this.email = email;
+        this.bookmark = bookmark;
 
-
-    public UserEntity toEntity(){
-        return UserEntity.builder()
-
-                .email(email)
-                .password(password)
-                .token(token)
-                .build();
     }
+
+
+
+
+
 }

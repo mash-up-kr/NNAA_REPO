@@ -5,10 +5,7 @@ import com.na.backend.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
@@ -16,6 +13,7 @@ import java.util.Map;
 
 
 @RestController
+@RequestMapping("/jilmun/")
 public class UserController {
 
     private UserService userService;
@@ -38,6 +36,8 @@ public class UserController {
 
     @GetMapping(value ="/login")
     public void logInUser(){
+       // userService.
+
 
 
         //userService.login();
