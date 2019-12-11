@@ -82,9 +82,9 @@ public class QuestionService {
 
        Questionnaire questionnaire=  Questionnaire.builder()
                .sender(questionnaireDto.getSender()).receiver(questionnaireDto.getReceiver()).questions(questionnaireDto.getQuestions()).build();
-
-        qustionnairRepository.save(questionnaire);
        
+        qustionnairRepository.save(questionnaire);
+
     }
 
     public void addBookmark(String token,String questionId) {

@@ -25,8 +25,6 @@ public class Questionnaire {
 
     private String questions;
 
-
-
     @Builder
     public Questionnaire(String sender, String receiver, String questions ){
         this.sender = sender;

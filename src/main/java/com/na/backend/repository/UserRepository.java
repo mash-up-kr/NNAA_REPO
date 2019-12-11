@@ -14,12 +14,8 @@ import java.util.Optional;
 public interface UserRepository extends MongoRepository<UserEntity, String> {
 
 
-   // Optional<List<Question>> findByIds(List<String> ids);
-
     //유저 찾기
     public UserEntity findByToken(String token);
 
 
-
-    //Optional<List<String>> find
 }

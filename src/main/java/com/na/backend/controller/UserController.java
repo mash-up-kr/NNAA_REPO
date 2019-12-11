@@ -21,7 +21,7 @@ public class UserController {
     public UserController(UserService userService){
         this.userService=userService;
     }
-
+    /*
     @PostMapping(value = "/user")
     public ResponseEntity<Map<String, String>> signUpUser(@RequestBody UserDto userDto, HttpServletResponse response){
 
@@ -33,7 +33,7 @@ public class UserController {
 
 
     }
-
+    */
     @GetMapping(value ="/login")
     public void logInUser(){
        // userService.
