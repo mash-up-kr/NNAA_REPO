@@ -42,13 +42,7 @@ public class QuestionController {
         return ResponseEntity.status(HttpStatus.OK).body(recommendationQuestions);
     }
 
-    @ApiOperation(value = "즐겨찾기해둔 질문들 보여주기 ", notes = "질문 고를때 즐겨찾기 질문들 보여주기 ")
-    @GetMapping("/bookmark")
-    public ResponseEntity<List<QuestionDto>> getBookmarkList() {
-        String userId = ""; // 토큰으로부터 user_id 가져오기
-        List<QuestionDto> likedQuestions = questionService.getHeartedQuestionList(userId);
-        return ResponseEntity.status(HttpStatus.OK).body(likedQuestions);
-    }
+
 
     @ApiOperation(value = "질문지 보내기", notes = "질문지를 1~20까지 작성후 전송 ")
     @PostMapping("/{receiverId}")
@@ -61,14 +55,15 @@ public class QuestionController {
     public void getSenderQuestionnaireList(@PathVariable Integer senderId) {
 
     }
-    //
+
     @ApiOperation(value = "응답자가 질문지 리스트 보기", notes = "질문지 리스트 보기")
     @GetMapping("/receiver/{receiverId}/list")
     public void getReceiverQuestionnaireList(@PathVariable Integer receiverId) {
 
     }
 
-    //
+
+    //6
     @ApiOperation(value = "질문지 보기", notes = "질문지 하나만 보기! / 답변 보기 / 보관함에서 보기")
     @GetMapping("/list/{questionnaireId}")
     public ResponseEntity<QuestionnaireDto> getQuestionnaire(@PathVariable Integer questionnaireId) {
@@ -76,10 +71,8 @@ public class QuestionController {
         QuestionnaireDto questionnaireDto =questionService.getQuestionnaire(questionnaireId);
         return ResponseEntity.status(HttpStatus.OK).body(questionnaireDto);
     }
-
-
-
-    //7 응답 결과 넣기
+    
+    //7
     @ApiOperation(value = "응답하기", notes = "질문지에 응답하기")
     @PutMapping("/answer/{questionnaireId}")
     public void answerQuestion(@PathVariable Integer questionnaireId ,@RequestBody QuestionnaireDto questionnaireDto ) {
@@ -88,9 +81,17 @@ public class QuestionController {
         //return ResponseEntity.status(HttpStatus.OK).body(questionnaireDto);
 
     }
+    //8
+    @ApiOperation(value = "즐겨찾기해둔 질문들 보여주기 ", notes = "질문 고를때 즐겨찾기 질문들 보여주기 ")
+    @GetMapping("/bookmark")
+    public ResponseEntity<List<QuestionDto>> getBookmarkList() {
+        String userId = ""; // 토큰으로부터 user_id 가져오기
+        List<QuestionDto> likedQuestions = questionService.getHeartedQuestionList(userId);
+        return ResponseEntity.status(HttpStatus.OK).body(likedQuestions);
+    }
 
 
-    //8 좋아요 등록하기
+    //9 좋아요 등록하기
     @ApiOperation(value = "좋아요 등록", notes = "좋아요 등록하기 ")
     @PostMapping("/bookmark/{questionId}")
     public void addBookmark( String token,@PathVariable String questionId) {
@@ -98,7 +99,7 @@ public class QuestionController {
         questionService.addBookmark(token,questionId);
 
     }
-
+    //10
     @ApiOperation(value = "좋아요 취소", notes = "좋아요 취소하기 ")
     @DeleteMapping("/heart/{questionId}")
     public void removeHeart(@PathVariable Integer questionId){
