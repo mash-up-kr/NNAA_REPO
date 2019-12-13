@@ -1,6 +1,5 @@
 package com.na.backend.entity;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,6 +22,7 @@ public class Questionnaire {
 
     private String receiver;
 
+    //리스트 타입..?
     private String questions;
 
     @Builder

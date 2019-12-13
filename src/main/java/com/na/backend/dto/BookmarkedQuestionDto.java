@@ -5,7 +5,7 @@ import lombok.Builder;
 import java.util.List;
 
 public class BookmarkedQuestionDto {
-     //질문 내용
+    //질문 내용
     private String content;
 
 

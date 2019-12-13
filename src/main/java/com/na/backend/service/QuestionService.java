@@ -1,14 +1,17 @@
 package com.na.backend.service;
 
-import com.na.backend.dto.*;
+import com.na.backend.dto.BookmarkedQuestionDto;
+import com.na.backend.dto.NewQuestionDto;
+import com.na.backend.dto.QuestionDto;
+import com.na.backend.dto.QuestionnaireDto;
 import com.na.backend.entity.Question;
 import com.na.backend.entity.Questionnaire;
 import com.na.backend.entity.UserEntity;
-import com.na.backend.mapper.QuestionMapper;
 import com.na.backend.repository.HeartRepository;
 import com.na.backend.repository.QuestionRepository;
-import com.na.backend.repository.QustionnairRepository;
+import com.na.backend.repository.QuestionnairRepository;
 import com.na.backend.repository.UserRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,23 +22,24 @@ import java.util.Optional;
 public class QuestionService {
 
     private final QuestionRepository questionRepository;
-    private final QuestionMapper questionMapper;
-    //질문지하나보기
-    private final QustionnairRepository  qustionnairRepository;
 
     private final HeartRepository heartRepository;
 
+    //질문지 , 유저 Repository
     private final UserRepository userRepository;
+    private final QuestionnairRepository questionnairRepository;
 
     public QuestionService(QuestionRepository questionRepository,
-                           QuestionMapper questionMapper,
-                           QustionnairRepository qustionnairRepository, HeartRepository heartRepository, UserRepository userRepository) {
+                           HeartRepository heartRepository,
+                           UserRepository userRepository,
+                           QuestionnairRepository questionnairRepository) {
         this.questionRepository = questionRepository;
-        this.questionMapper = questionMapper;
-        this.qustionnairRepository = qustionnairRepository;
 
         this.heartRepository = heartRepository;
+
+        this.questionnairRepository = questionnairRepository;
         this.userRepository = userRepository;
+
     }
 
     public List<QuestionDto> getRecommendationQuestionList() {
@@ -43,9 +47,11 @@ public class QuestionService {
         List<QuestionDto> compactResult = new ArrayList<>();
         for( Question q : result ) {
             System.out.println(q);
-            compactResult.add(questionMapper.toQuestionDto(q));
+            compactResult.add(QuestionDto.builder()
+                    .content(q.getContent())
+                    .choices(q.getChoices())
+                    .build());
         }
-
         return compactResult;
     }
 
@@ -54,69 +60,58 @@ public class QuestionService {
     }
 
     /*
-    밑에 getBookmarkList 부분
-    // postgresql 로..
+    8번 작성
     public List<QuestionDto> getHeartedQuestionList(String userId) {
         // mongodb로 하려면..
         //user = db.users.findOne( { _id: ObjectID(‘23423481972398127’) } );
         //user_likes = db.question.find({ _id : { $in : user.likes } }).toArray();
 
         List<String> questionList = heartRepository.findQuestionIdsById(userId);
-        List<Question> result = questionRepository.findByIds(questionList).get();
+        List<Question> result = questionRepository.findQuestionsByIdIn(questionList).get();
         List<QuestionDto> compactResult = new ArrayList<>();
         for( Question q : result ) {
             System.out.println(q);
-            compactResult.add(questionMapper.toQuestionDto(q));
+            compactResult.add(QuestionDto.builder()
+                    .content(q.getContent())
+                    .choices(q.getChoices())
+                    .build());
         }
 
         return compactResult;
     }
-    */
-    public QuestionnaireDto getQuestionnaire(Integer questionnaireId) {
+     */
 
-        List<Questionnaire> list =  qustionnairRepository.findAll();
-       return  QuestionnaireDto.builder().sender(list.get(questionnaireId).getSender()).receiver(list.get(questionnaireId).getReceiver()).questions(list.get(questionnaireId).getQuestions()).build();
+
+    //6
+    public QuestionnaireDto getQuestionnaire(String questionnaireId) {
+
+        //질문지 번호로 해당 질문 받아오기
+        Questionnaire questionnaire= questionnairRepository.findById(questionnaireId).get();
+
+        return  QuestionnaireDto.builder()
+                .sender(questionnaire.getSender())
+                .receiver(questionnaire.getReceiver())
+                .questions(questionnaire.getQuestions())
+                .build();
+
 
     }
 
+    //7
     public void insertAnswer(QuestionnaireDto questionnaireDto) {
 
-       Questionnaire questionnaire=  Questionnaire.builder()
-               .sender(questionnaireDto.getSender())
-               .receiver(questionnaireDto.getReceiver())
-               .questions(questionnaireDto.getQuestions()).build();
+        Questionnaire questionnaire=  Questionnaire.builder()
+                .sender(questionnaireDto.getSender())
+                .receiver(questionnaireDto.getReceiver())
+                .questions(questionnaireDto.getQuestions()).build();
 
-        qustionnairRepository.save(questionnaire);
-
-    }
-
-    public void addBookmark(String token,String questionId) {
-
-        // 유저를 토큰으로먼저 찾는다
-        UserEntity user = userRepository.findByToken(token);
-        // 그 유저의 즐찾 배열을 찾는다
-        List<String> bookmarks = user.getBookmark();
-        // 그 배열에 질문을 추가한다
-        bookmarks.add(questionId);
-        //유저정보 업데이트
-        userRepository.save(user);
+        questionnairRepository.save(questionnaire);
 
     }
 
 
-    public void removeBookmark(String token, String questionId) {
 
-        // 유저를 토큰으로먼저 찾는다
-        UserEntity user = userRepository.findByToken(token);
-        // 그 유저의 즐찾 배열을 찾는다
-        List<String> bookmarks = user.getBookmark();
-        // 그 배열에 질문을 삭제
-        bookmarks.remove(questionId);
-        //유저정보 업데이트
-        userRepository.save(user);
-
-    }
-
+    //8
     public List<BookmarkedQuestionDto> getBookmarkList(String token) {
 
         // 북마크 질문 dto 리스트
@@ -139,4 +134,36 @@ public class QuestionService {
         return list;
 
     }
+
+    //9
+    public void addBookmark(String token,String questionId) {
+        // 유저를 토큰으로먼저 찾는다
+        UserEntity user = userRepository.findByToken(token);
+        // 그 유저의 즐찾 배열을 찾는다
+        List<String> bookmarks = user.getBookmark();
+        // 그 배열에 질문을 추가한다
+        bookmarks.add(questionId);
+        //유저정보 업데이트
+        userRepository.save(user);
+
+    }
+
+    //10
+    public void removeBookmark(String token, String questionId) {
+
+        // 유저를 토큰으로먼저 찾는다
+        UserEntity user = userRepository.findByToken(token);
+        // 그 유저의 즐찾 배열을 찾는다
+        List<String> bookmarks = user.getBookmark();
+        // 그 배열에 질문을 삭제
+        bookmarks.remove(questionId);
+        //유저정보 업데이트
+        userRepository.save(user);
+
+    }
+
+
+
+
+
 }

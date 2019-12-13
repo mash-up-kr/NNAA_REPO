@@ -36,5 +36,15 @@ public class UserDto {
 
     }
 
+    public UserEntity toEntity(){
+        return UserEntity.builder()
+
+                .email(email)
+                .password(password)
+                .token(token)
+                .build();
+
+
+}
 
 }
