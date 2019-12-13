@@ -9,5 +9,6 @@ import java.util.List;
 
 @Repository
 public interface HeartRepository extends JpaRepository<Heart,Long> {
+
     List<String> findQuestionIdsById(String userId);
 }
