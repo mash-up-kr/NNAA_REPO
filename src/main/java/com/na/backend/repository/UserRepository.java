@@ -1,9 +1,11 @@
 package com.na.backend.repository;
 
-import com.na.backend.dto.UserDto;
-import com.na.backend.entity.UserEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.na.backend.entity.User;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
 
-public interface UserRepository extends JpaRepository<UserEntity,Long> {
-
+@Repository
+public interface UserRepository extends MongoRepository<User, String> {
+    //User save(User user);
+    User findByUserId(Long userId);
 }
