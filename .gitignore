@@ -31,3 +31,6 @@ out/
 ### VS Code ###
 .vscode/
 .DS_Store
+
+### OAuth 인증정보 제외
+/src/main/resources/google.yml
