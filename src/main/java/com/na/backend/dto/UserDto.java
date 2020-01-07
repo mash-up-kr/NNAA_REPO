@@ -1,6 +1,5 @@
 package com.na.backend.dto;
 
-import com.na.backend.entity.UserEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,16 +34,5 @@ public class UserDto {
         this.token = token;
 
     }
-
-    public UserEntity toEntity(){
-        return UserEntity.builder()
-
-                .email(email)
-                .password(password)
-                .token(token)
-                .build();
-
-
-}
 
 }

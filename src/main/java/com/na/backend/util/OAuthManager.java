@@ -66,7 +66,7 @@ public class OAuthManager {
                 }
 
                 return User.builder()
-                        .userId(userId)
+                        .uid(userId)
                         .email(email)
                         .emailVerified(emailVerified)
                         .name(nickname)
@@ -106,7 +106,7 @@ public class OAuthManager {
                 }
 
                 return User.builder()
-                        .userId(userId)
+                        .uid(userId)
                         .build();
         }
         throw new InvalidProviderException();
