@@ -26,11 +26,11 @@ public class UserService {
     }
 
     public UserInfo findByUserId(Long userId) {
-        return userMapper.toUserInfo(userRepository.findByUserId(userId));
+        return userMapper.toUserInfo(userRepository.findByUid(userId));
     }
 
     public Boolean isUser(Long userId) {
-        User user = userRepository.findByUserId(userId);
+        User user = userRepository.findByUid(userId);
         return user != null;
     }
 

@@ -34,7 +34,7 @@ public class UserController {
         String provider = request.getHeader("provider");
 
         User user = OAuthManager.getUser(provider, accessToken);
-        Long userId = user.getUserId();
+        Long userId = user.getUid();
         System.out.println(userId);
 
         if (userService.isUser(userId)) {

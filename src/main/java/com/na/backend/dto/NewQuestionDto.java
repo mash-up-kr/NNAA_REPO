@@ -2,33 +2,33 @@ package com.na.backend.dto;
 
 import lombok.*;
 
+import java.util.Map;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class NewQuestionDto {
 
-    private String category;
     private String type;
+    private String category;
     private String content;
-    private String choices;
+    private Map<String, String> choices;
 
-//    @Builder
-//    public NewQuestionDto(String content, String choices, String type, String category){
-//        this.content = content;
-//        this.choices = choices;
-//        this.category = category;
-//        this.type = type;
-//    }
+    @Builder
+    public NewQuestionDto(String type, String content, String category, Map<String, String> choices){
+        this.type = type;
+        this.category = category;
+        this.content = content;
+        this.choices = choices;
+    }
 
     @Override
     public String toString() {
         return "NewQuestionDto{" +
-                "category='" + category + '\'' +
-                ", type='" + type + '\'' +
+                "type='" + type + '\'' +
+                ", category='" + category + '\'' +
                 ", content='" + content + '\'' +
-                ", choices='" + choices + '\'' +
+                ", choices=" + choices +
                 '}';
     }
 }

@@ -7,13 +7,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
 
 @Getter
 @Setter
 @NoArgsConstructor
-public class QuestionnaireDto {
+public class NewQuestionnaireDto {
 
     private String receiverId;
     private String category;
@@ -22,11 +21,11 @@ public class QuestionnaireDto {
     private Map<String, String> answers;
 
     @Builder
-    public QuestionnaireDto(String receiverId,
-                            String category,
-                            LocalDateTime createdAt,
-                            Map<String, String> questions,
-                            Map<String, String> answers) {
+    public NewQuestionnaireDto(String receiverId,
+                               String category,
+                               LocalDateTime createdAt,
+                               Map<String, String> questions,
+                               Map<String, String> answers) {
         this.receiverId = receiverId;
         this.category = category;
         this.createdAt = createdAt;
