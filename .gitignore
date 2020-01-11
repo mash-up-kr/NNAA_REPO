@@ -34,3 +34,6 @@ out/
 
 ### OAuth 인증정보 제외
 /src/main/resources/google.yml
+
+### DB 설정정보 제
+/src/main/resources/application.properties

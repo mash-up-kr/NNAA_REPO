@@ -32,7 +32,7 @@ public class QuestionnaireController {
     }
 
     @ApiOperation(value = "질문지에 답변하기", notes = "질문지에 응답하기")
-    @PutMapping("/{questionnaireId}")
+    @PatchMapping("/{questionnaireId}")
     public ResponseEntity<Questionnaire> answerQuestionnaire(@PathVariable String questionnaireId ,
                                                              @RequestBody QuestionnaireAnswerDto questionnaireAnswerDto) {
 
