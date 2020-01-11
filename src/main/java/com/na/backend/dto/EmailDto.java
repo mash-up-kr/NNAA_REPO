@@ -1,5 +1,6 @@
 package com.na.backend.dto;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,8 +10,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class EmailDto {
-
+    @ApiModelProperty(example = "user1@abc.com")
     private String email;
+    @ApiModelProperty(example = "abc1")
     private String password;
 
     @Builder

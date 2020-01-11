@@ -5,6 +5,8 @@ import com.na.backend.dto.QuestionnaireDto;
 import com.na.backend.entity.Questionnaire;
 import com.na.backend.service.QuestionnaireService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +34,9 @@ public class QuestionnaireController {
     }
 
     @ApiOperation(value = "질문지에 답변하기", notes = "질문지에 응답하기")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "questionnaireId", value = "질문지 번호", paramType = "path", required = true)
+    })
     @PatchMapping("/{questionnaireId}")
     public ResponseEntity<Questionnaire> answerQuestionnaire(@PathVariable String questionnaireId ,
                                                              @RequestBody QuestionnaireAnswerDto questionnaireAnswerDto) {
@@ -40,6 +45,9 @@ public class QuestionnaireController {
     }
 
     @ApiOperation(value = "질문지 보기", notes = "질문지 하나만 보기! / 답변 보기 / 보관함에서 보기")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "questionnaireId", value = "질문지 번호", paramType = "path", required = true)
+    })
     @GetMapping("/{questionnaireId}")
     public ResponseEntity<QuestionnaireDto> getQuestionnaire(@PathVariable String questionnaireId) {
 

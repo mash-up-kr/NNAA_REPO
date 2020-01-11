@@ -9,7 +9,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfig implements WebMvcConfigurer {
     private static final String[] EXCLUDE_PATHS = {
             //"/user/**",
-            "/swagger-ui.html#",
+            //"/swagger-ui.html#",
+            "/**",
             "/user/email",
             "/user/social"
     };
@@ -23,7 +24,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(tokenInterceptor)
-                .addPathPatterns("/**")
+                //.addPathPatterns("/**")
                 .excludePathPatterns(EXCLUDE_PATHS);
     }
 }
