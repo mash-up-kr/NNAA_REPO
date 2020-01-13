@@ -1,6 +1,7 @@
 package com.na.backend.service;
 
 import com.na.backend.dto.EmailDto;
+import com.na.backend.dto.ProfileDto;
 import com.na.backend.entity.User;
 import com.na.backend.exception.UnauthorizedException;
 import com.na.backend.mapper.UserMapper;
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -99,6 +99,13 @@ public class UserService {
 
         //List<String> myFriends = userRepository.findById(myId);
         //userRepository.update(myFriends.add(id));
+    }
+
+    public User updateNickname(String myId, ProfileDto profileDto) {
+        User me = userRepository.findById(myId).get();
+        me.setNickname(profileDto.getNickname());
+
+        return userRepository.save(me);
     }
 
     private boolean isEmailUser(String email) {

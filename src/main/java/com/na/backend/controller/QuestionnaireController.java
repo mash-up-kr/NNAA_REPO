@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Api(value="질문지 API")
@@ -20,6 +21,7 @@ import java.util.List;
 @RequestMapping("/questionnaire")
 public class QuestionnaireController {
 
+    private final String HEADER_ID = "id";
     private final QuestionnaireService questionnaireService;
 
     public QuestionnaireController(QuestionnaireService questionnaireService) {
@@ -28,9 +30,9 @@ public class QuestionnaireController {
 
     @ApiOperation(value = "질문지 보내기", notes = "질문지를 1~20까지 작성후 전송 ")
     @PostMapping
-    public ResponseEntity<Questionnaire> sendQuestionnaire(@RequestBody QuestionnaireDto questionnaireDto) {
-
-        return ResponseEntity.status(HttpStatus.OK).body(questionnaireService.createQuestionnaire(questionnaireDto));
+    public ResponseEntity<Questionnaire> sendQuestionnaire(@RequestBody QuestionnaireDto questionnaireDto, HttpServletRequest request) {
+        String myId = request.getHeader(HEADER_ID);
+        return ResponseEntity.status(HttpStatus.OK).body(questionnaireService.createQuestionnaire(myId, questionnaireDto));
     }
 
     @ApiOperation(value = "질문지에 답변하기", notes = "질문지에 응답하기")
@@ -57,16 +59,18 @@ public class QuestionnaireController {
 
     @ApiOperation(value = "보낸 질문지 리스트 보기", notes = "질문자가 자신이 보낸 질문지들을 볼 수 있다. (현재 작성하고있는 질문지도 볼수 있다? => 추후 논의 필요) ")
     @GetMapping("/outbox")
-    public ResponseEntity<List<QuestionnaireDto>> getOutboxQuestionnaireList() {
+    public ResponseEntity<List<QuestionnaireDto>> getOutboxQuestionnaireList(HttpServletRequest request) {
+        String myId = request.getHeader(HEADER_ID);
 
-        return ResponseEntity.status(HttpStatus.OK).body(questionnaireService.getOutboxQuestionnaires());
+        return ResponseEntity.status(HttpStatus.OK).body(questionnaireService.getOutboxQuestionnaires(myId));
     }
 
     @ApiOperation(value = "받은 질문지 리스트 보기", notes = "응답자가 자신이 받은 질문지들과 현재 보내고 있는 질문지들을 볼 수 있다. ")
     @GetMapping("/inbox")
-    public ResponseEntity<List<QuestionnaireDto>> getInboxQuestionnaireList() {
+    public ResponseEntity<List<QuestionnaireDto>> getInboxQuestionnaireList(HttpServletRequest request) {
+        String myId = request.getHeader(HEADER_ID);
 
-        return ResponseEntity.status(HttpStatus.OK).body(questionnaireService.getInboxQuestionnaires());
+        return ResponseEntity.status(HttpStatus.OK).body(questionnaireService.getInboxQuestionnaires(myId));
     }
 
 }

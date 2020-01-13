@@ -71,7 +71,7 @@ public class OAuthManager {
                     JsonElement element = parser.parse(result);
 
                     JsonObject data = element.getAsJsonObject().get("data").getAsJsonObject();
-
+                    System.out.println(data);
                     userId = data.getAsJsonObject().get("user_id").toString();
                 }catch (IOException e) {
                     e.printStackTrace();

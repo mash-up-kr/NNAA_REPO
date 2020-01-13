@@ -21,8 +21,8 @@ public class QuestionnaireService {
         this.questionMapper = questionMapper;
     }
 
-    public Questionnaire createQuestionnaire(QuestionnaireDto questionnaireDto) {
-        String createUserId = "내 아이디";
+    public Questionnaire createQuestionnaire(String createUserId, QuestionnaireDto questionnaireDto) {
+
         return questionnaireRepository.insert(questionMapper.toQuestionnaire(createUserId, questionnaireDto));
     }
 
@@ -34,13 +34,13 @@ public class QuestionnaireService {
         return questionnaireRepository.save(fillQuestionnaire(questionnaire, questionnaireAnswerDto));
     }
 
-    public List<QuestionnaireDto> getOutboxQuestionnaires() {
-        String myId = "내 아이디";
+    public List<QuestionnaireDto> getOutboxQuestionnaires(String myId) {
+
         return questionMapper.toQuestionnaireDtos(questionnaireRepository.findByCreateUserId(myId));
     }
 
-    public List<QuestionnaireDto> getInboxQuestionnaires() {
-        String myId = "내 아이디";
+    public List<QuestionnaireDto> getInboxQuestionnaires(String myId) {
+
         return questionMapper.toQuestionnaireDtos(questionnaireRepository.findByReceiverId(myId));
     }
 

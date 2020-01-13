@@ -12,6 +12,7 @@ import java.util.Map;
 @Setter
 @NoArgsConstructor
 public class QuestionDto {
+
     @ApiModelProperty(example = "주관식")
     private String type;
     @ApiModelProperty(example = "친구")
