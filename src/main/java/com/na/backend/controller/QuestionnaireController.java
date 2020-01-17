@@ -21,7 +21,7 @@ import java.util.List;
 @RequestMapping("/questionnaire")
 public class QuestionnaireController {
 
-    private final String HEADER_ID = "id";
+    private static final String HEADER_ID = "id";
     private final QuestionnaireService questionnaireService;
 
     public QuestionnaireController(QuestionnaireService questionnaireService) {

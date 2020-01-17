@@ -7,6 +7,8 @@ import com.na.backend.entity.User;
 import com.na.backend.service.UserService;
 import com.na.backend.util.OAuthManager;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 
 @Api(value="user 인증 API")
@@ -21,7 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/user")
 public class UserController {
 
-    private final String HEADER_ID = "id";
+    private static final String HEADER_ID = "id";
     private UserService userService;
 
     public UserController(UserService userService){
@@ -58,5 +61,40 @@ public class UserController {
         User updatedUser = userService.updateNickname(myId, profileDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
+    }
+
+    @ApiOperation(value = "즐겨찾기해둔 질문들 보여주기 ", notes = "질문 고를때 즐겨찾기 질문들 보여주기 ")
+    @GetMapping("/bookmark")
+    public ResponseEntity<List<String>> getBookmarkList(HttpServletRequest request) {
+        String myId = request.getHeader(HEADER_ID);
+        List<String> userBookmark = userService.getUserBookmark(myId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(userBookmark);
+    }
+
+
+    @ApiOperation(value = "즐겨찾기 등록", notes = "질문 즐겨찾기 등록하기 ")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "questionId", value = "문제 번호", paramType = "path", required = true)
+    })
+    @PatchMapping("/bookmark/{questionId}")
+    public ResponseEntity<Void> addBookmark(@PathVariable String questionId, HttpServletRequest request) {
+        String myId = request.getHeader(HEADER_ID);
+        userService.addBookmark(myId,questionId);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
+
+    }
+
+    @ApiOperation(value = "즐겨찾기 취소", notes = "질문 즐겨찾기 취소하기 ")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "questionId", value = "문제 번호", paramType = "path", required = true)
+    })
+    @DeleteMapping("/bookmark/{questionId}")
+    public ResponseEntity<Void> removeHeart(@PathVariable String questionId, HttpServletRequest request){
+        String myId = request.getHeader(HEADER_ID);
+        userService.dropBookmark(myId,questionId);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/friend")
 public class FriendController {
 
-    private final String HEADER_ID = "id";
+    private static final String HEADER_ID = "id";
     private final UserService userService;
 
     public FriendController(UserService userService){
