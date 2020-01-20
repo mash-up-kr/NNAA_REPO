@@ -21,7 +21,6 @@ import java.util.Optional;
 @RequestMapping("/question")
 public class QuestionController {
 
-    private final String HEADER_ID = "id";
     private final QuestionService questionService;
 
     public QuestionController(QuestionService questionService) {
