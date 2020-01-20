@@ -3,7 +3,6 @@ package com.na.backend.mapper;
 import com.na.backend.dto.NewQuestionDto;
 import com.na.backend.dto.QuestionDto;
 import com.na.backend.dto.QuestionnaireDto;
-import com.na.backend.dto.UserInfo;
 import com.na.backend.entity.Question;
 import com.na.backend.entity.Questionnaire;
 import com.na.backend.entity.User;
@@ -14,12 +13,6 @@ import java.util.List;
 
 @Component
 public class QuestionMapper {
-    public UserInfo toUserInfo(User user) {
-        return UserInfo.builder()
-                .email(user.getEmail())
-                .name(user.getName())
-                .build();
-    }
 
     public Question toQuestion(NewQuestionDto newQuestionDto) {
         return Question.builder()

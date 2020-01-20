@@ -1,6 +1,7 @@
 package com.na.backend.dto;
 
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,9 +14,15 @@ import java.util.Map;
 @Setter
 @NoArgsConstructor
 public class QuestionnaireAnswerDto {
-
+    @ApiModelProperty(example = "{\n" +
+            "\t\t\"1\": \"웃겼던 추억 답변\",\n" +
+            "\t\t\"2\": \"흑역사 답변\"\n" +
+            "\t}")
     private Map<String, String> answers;
+
+    @ApiModelProperty(example = "false")
     private Boolean completeFlag;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime answeredAt;

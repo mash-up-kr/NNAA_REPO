@@ -38,8 +38,18 @@ public class QuestionService {
         return questionRepository.insert(questionMapper.toQuestion(newQuestionDto));
     }
 
-    public List<QuestionDto> getRecommendationQuestionList(String category, String type) {
-        List<Question> result = questionRepository.findByCategoryAndType(category, type);
+    public List<Question> getRecommendationQuestionList(String category, String type) {
+        List<Question> result = new ArrayList<>();
+
+        if ( category.equals("all") && type.equals("all") ) {
+            result = questionRepository.findAll();
+        } else if ( type.equals("all")) {
+            result = questionRepository.findByCategory(category);
+        } else if ( category.equals("all") ) {
+            result = questionRepository.findByType(type);
+        } else {
+            result = questionRepository.findByCategoryAndType(category, type);
+        }
 
         if(result.isEmpty()){
             // TODO: 결과 없음 custom exception 만들어야 함
@@ -47,13 +57,7 @@ public class QuestionService {
             throw new RuntimeException();
         }
 
-        // TODO: 자바 8 적용
-        List<QuestionDto> compactResult = new ArrayList<>();
-        result.forEach(question -> {
-            compactResult.add(questionMapper.toQuestionDto(question));
-        });
-
-        return compactResult;
+        return result;
     }
 
     public void insertAnswer(QuestionnaireDto questionnaireDto) {

@@ -3,42 +3,47 @@ package com.na.backend.entity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
 import java.util.List;
 
 @NoArgsConstructor
 @Getter
+@Setter
 public class User {
     @Id
     private String id;
-    private Long uid;
+    private String uid;
     private String email;
-    private Boolean emailVerified;
+    private String salt;
     private String password;
-    private String name;
+    private String nickname;
     private String provider;
     private String token;
     private List<String> bookmarks;
+    private List<String> friends;
 
     @Builder
     public User(String id,
-                Long uid,
+                String uid,
                 String email,
-                Boolean emailVerified,
                 String password,
-                String name,
+                String salt,
+                String nickname,
                 String provider,
                 String token,
-                List<String> bookmarks) {
+                List<String> bookmarks,
+                List<String> friends) {
         this.id = id;
         this.uid = uid;
         this.email = email;
-        this.emailVerified = emailVerified;
         this.password = password;
-        this.name = name;
+        this.salt = salt;
         this.provider = provider;
         this.token = token;
+        this.nickname = nickname;
         this.bookmarks = bookmarks;
+        this.friends = friends;
     }
 }
