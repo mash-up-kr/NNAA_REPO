@@ -23,14 +23,10 @@ import java.util.Optional;
 @RequestMapping("/question")
 public class QuestionController {
 
-    private final String HEADER_ID = "id";
     private final QuestionService questionService;
-    private final UserService userService;
 
-
-    public QuestionController(QuestionService questionService ,UserService userService) {
+    public QuestionController(QuestionService questionService) {
         this.questionService = questionService;
-        this.userService=userService;
     }
 
     @ApiOperation(value = "질문 입력하기", notes = "질문등록하기 ")
@@ -52,42 +48,6 @@ public class QuestionController {
         return ResponseEntity.status(HttpStatus.OK).body(recommendationQuestions);
     }
 
-
-
-    @ApiOperation(value = "즐겨찾기해둔 질문들 보여주기 ", notes = "질문 고를때 즐겨찾기 질문들 보여주기 ")
-    @GetMapping("/bookmark")
-    public ResponseEntity<List<String>> getBookmarkList(HttpServletRequest request) {
-        String myId = request.getHeader(HEADER_ID);
-        List<String> userBookmark = userService.getUserBookmark(myId);
-
-        return ResponseEntity.status(HttpStatus.OK).body(userBookmark);
-    }
-
-
-    @ApiOperation(value = "즐겨찾기 등록", notes = "질문 즐겨찾기 등록하기 ")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "questionId", value = "문제 번호", paramType = "path", required = true)
-    })
-    @PatchMapping("/bookmark/{questionId}")
-    public ResponseEntity<Void> addBookmark(@PathVariable String questionId, HttpServletRequest request) {
-        String myId = request.getHeader(HEADER_ID);
-        userService.addBookmark(myId,questionId);
-
-        return ResponseEntity.status(HttpStatus.OK).build();
-
-    }
-
-    @ApiOperation(value = "즐겨찾기 취소", notes = "질문 즐겨찾기 취소하기 ")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "questionId", value = "문제 번호", paramType = "path", required = true)
-    })
-    @DeleteMapping("/bookmark/{questionId}")
-    public ResponseEntity<Void> removeHeart(@PathVariable String questionId, HttpServletRequest request){
-        String myId = request.getHeader(HEADER_ID);
-        userService.dropBookmark(myId,questionId);
-
-        return ResponseEntity.status(HttpStatus.OK).build();
-    }
 
 }
 
