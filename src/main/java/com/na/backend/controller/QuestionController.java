@@ -12,9 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Optional;
 
 @Api(value="질문 API")
 @Controller
@@ -31,6 +29,7 @@ public class QuestionController {
     @PostMapping
     public ResponseEntity<Question> insertQuestion(@RequestBody NewQuestionDto newQuestionDto){
         Question newQuestion = questionService.insertNewQuestion(newQuestionDto);
+
         return ResponseEntity.status(HttpStatus.OK).body(newQuestion);
     }
 
@@ -43,37 +42,8 @@ public class QuestionController {
     @GetMapping
     public ResponseEntity<List<Question>> getQuestionList(@RequestParam(defaultValue = "all") String category, @RequestParam(defaultValue = "all") String type) {
         List<Question> recommendationQuestions = questionService.getRecommendationQuestionList(category, type);
+
         return ResponseEntity.status(HttpStatus.OK).body(recommendationQuestions);
     }
-
-    @ApiOperation(value = "즐겨찾기해둔 질문들 보여주기 ", notes = "질문 고를때 즐겨찾기 질문들 보여주기 ")
-    @GetMapping("/bookmark")
-    public ResponseEntity<List<Question>> getBookmarkList(HttpServletRequest request) {
-        String myId = request.getHeader(HEADER_ID);
-
-        return ResponseEntity.status(HttpStatus.OK).body(questionService.getBookmarkList(myId));
-    }
-
-    @ApiOperation(value = "즐겨찾기 등록", notes = "질문 즐겨찾기 등록하기 ")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "questionId", value = "문제 번호", paramType = "path", required = true)
-    })
-    @PostMapping("/bookmark/{questionId}")
-    public void addBookmark(@PathVariable String questionId, HttpServletRequest request) {
-        String myId = request.getHeader(HEADER_ID);
-        questionService.addBookmark(myId,questionId);
-
-    }
-
-    @ApiOperation(value = "즐겨찾기 취소", notes = "질문 즐겨찾기 취소하기 ")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "questionId", value = "문제 번호", paramType = "path", required = true)
-    })
-    @DeleteMapping("/bookmark/{questionId}")
-    public void removeHeart(@PathVariable String questionId, HttpServletRequest request){
-        String myId = request.getHeader(HEADER_ID);
-        questionService.removeBookmark(myId,questionId);
-    }
-
 }
 

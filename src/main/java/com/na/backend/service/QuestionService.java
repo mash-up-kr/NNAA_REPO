@@ -1,7 +1,6 @@
 package com.na.backend.service;
 
 import com.na.backend.dto.NewQuestionDto;
-import com.na.backend.dto.QuestionDto;
 import com.na.backend.dto.QuestionnaireDto;
 import com.na.backend.entity.Question;
 import com.na.backend.entity.Questionnaire;
@@ -104,9 +103,4 @@ public class QuestionService {
         //유저정보 업데이트
         //userRepository.save(user);
     }
-
-
-
-
-
 }

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -95,17 +96,46 @@ public class UserService {
         }
     }
 
-    public void addFriendById(String myId, String id) {
+    @Transactional
+    public User addFriendById(String myId, String id) {
+        Optional<User> user= userRepository.findById(myId);
+        List<String> userFriends;
 
-        //List<String> myFriends = userRepository.findById(myId);
-        //userRepository.update(myFriends.add(id));
+        if ( user.isPresent() ) {
+            userFriends = user.get().getFriends();
+
+            if(!userFriends.contains(id)) {
+                userFriends.add(id);
+                return userRepository.save(user.get());
+            } else {
+                throw new RuntimeException();
+            }
+        } else {
+            throw new RuntimeException();
+        }
+
     }
 
+    @Transactional
     public User updateNickname(String myId, ProfileDto profileDto) {
-        User me = userRepository.findById(myId).get();
-        me.setNickname(profileDto.getNickname());
+        Optional<User> user= userRepository.findById(myId);
+        String newNickname;
 
-        return userRepository.save(me);
+        if ( user.isPresent() ) {
+            newNickname = profileDto.getNickname();
+            //이미 사용되는 닉네임일 경우
+            if(getIdByNickname(newNickname)!= null){
+                throw new RuntimeException();
+            }
+            else {
+                user.get().setNickname(newNickname);
+                return userRepository.save(user.get());
+            }
+
+        } else {
+            throw new RuntimeException();
+        }
+
     }
 
     private boolean isEmailUser(String email) {
@@ -118,4 +148,56 @@ public class UserService {
         return userRepository.findByUid(uid).isPresent();
     }
 
+    public List<String> getUserBookmark(String myId) {
+        Optional<User> user= userRepository.findById(myId);
+        List<String> userBookmark;
+
+        if ( user.isPresent() ) {
+            userBookmark = user.get().getBookmarks();
+            return userBookmark;
+        } else {
+            throw new RuntimeException();
+        }
+
+    }
+
+    @Transactional
+    public User addBookmark(String myId, String questionId) {
+        Optional<User> user= userRepository.findById(myId);
+        List<String> userBookmark;
+
+        if ( user.isPresent() ) {
+            userBookmark = user.get().getBookmarks();
+
+            if(!userBookmark.contains(questionId)) {
+                userBookmark.add(questionId);
+                return userRepository.save(user.get());
+            } else {
+                throw new RuntimeException();
+            }
+        } else {
+            throw new RuntimeException();
+        }
+    }
+
+    @Transactional
+    public User dropBookmark(String myId, String questionId) {
+        Optional<User> user= userRepository.findById(myId);
+        List<String> userBookmark;
+
+        if ( user.isPresent() ) {
+            userBookmark = user.get().getBookmarks();
+
+            if(userBookmark.contains(questionId)){
+                userBookmark.remove(questionId);
+                return userRepository.save(user.get());
+
+            } else {
+                throw new RuntimeException();
+            }
+
+        } else {
+            throw new RuntimeException();
+        }
+    }
 }
