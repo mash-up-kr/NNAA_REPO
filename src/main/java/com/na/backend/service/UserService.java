@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,7 +61,9 @@ public class UserService {
                                .email(userEmail)
                                .password(encryptPassword)
                                .salt(salt)
-                               .token(token).build();
+                               .bookmarks(new ArrayList<String>())
+                               .token(token)
+                               .build();
 
             return userRepository.insert(newUser);
         }
@@ -80,6 +83,7 @@ public class UserService {
             User newUser = User.builder()
                                .uid(uid)
                                .salt(salt)
+                               .bookmarks(new ArrayList<String>())
                                .token(token).build();
 
             return userRepository.insert(newUser);
