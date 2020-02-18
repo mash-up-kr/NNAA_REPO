@@ -9,23 +9,18 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class EmailDto {
+public class SignUpDto {
     @ApiModelProperty(example = "user1@abc.com")
     private String email;
     @ApiModelProperty(example = "abc1")
     private String password;
+    @ApiModelProperty(example = "찌루루")
+    private String name;
 
     @Builder
-    public EmailDto(String email, String password){
+    public SignUpDto(String email, String password, String name) {
         this.email = email;
         this.password = password;
-    }
-
-    @Override
-    public String toString() {
-        return "EmailDto{" +
-                "email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                '}';
+        this.name = name;
     }
 }

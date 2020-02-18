@@ -1,7 +1,7 @@
 package com.na.backend.service;
 
-import com.na.backend.dto.EmailDto;
-import com.na.backend.dto.ProfileDto;
+import com.na.backend.dto.LogInDto;
+import com.na.backend.dto.SignUpDto;
 import com.na.backend.entity.User;
 import com.na.backend.exception.UnauthorizedException;
 import com.na.backend.mapper.UserMapper;
@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 @Service
 public class UserService {
@@ -38,34 +39,39 @@ public class UserService {
     }
 
     @Transactional
-    public User getUserByEmail(EmailDto emailDto) {
-        String userEmail = emailDto.getEmail();
-        String userPassword = emailDto.getPassword();
+    public User addUserByEmail(SignUpDto signUpDto) {
+        String userEmail = signUpDto.getEmail();
+        String userPassword = signUpDto.getPassword();
 
-        if ( isEmailUser(userEmail) ) {
-            User user = userRepository.findByEmail(userEmail).get();
-            String userSalt = user.getSalt();
-            String encryptPassword = EncryptManager.encryptPlainString(userPassword, userSalt);
+        String salt = EncryptManager.generateSalt();
+        String encryptPassword = EncryptManager.encryptPlainString(userPassword, salt);
+        String token = EncryptManager.createToken(userEmail, LocalDateTime.now(), salt);
 
-            if (encryptPassword.equals(user.getPassword())) {
-                return user;
-            } else {
-                throw new UnauthorizedException("invalid password");
-            }
+        User newUser = User.builder()
+                           .email(userEmail)
+                           .name("")
+                           .password(encryptPassword)
+                           .salt(salt)
+                           .bookmarks(new ArrayList<String>())
+                           .token(token)
+                           .build();
+
+        return userRepository.insert(newUser);
+    }
+
+    @Transactional
+    public User getUserByEmail(LogInDto loginDto) {
+        String userEmail = loginDto.getEmail();
+        String userPassword = loginDto.getPassword();
+
+        User user = userRepository.findByEmail(userEmail).get();
+        String userSalt = user.getSalt();
+        String encryptPassword = EncryptManager.encryptPlainString(userPassword, userSalt);
+
+        if (encryptPassword.equals(user.getPassword())) {
+            return user;
         } else {
-            String salt = EncryptManager.generateSalt();
-            String encryptPassword = EncryptManager.encryptPlainString(userPassword, salt);
-            String token = EncryptManager.createToken(userEmail, LocalDateTime.now(), salt);
-
-            User newUser = User.builder()
-                               .email(userEmail)
-                               .password(encryptPassword)
-                               .salt(salt)
-                               .bookmarks(new ArrayList<String>())
-                               .token(token)
-                               .build();
-
-            return userRepository.insert(newUser);
+            throw new UnauthorizedException("invalid password");
         }
     }
 
@@ -82,6 +88,7 @@ public class UserService {
 
             User newUser = User.builder()
                                .uid(uid)
+                               .name("")
                                .salt(salt)
                                .bookmarks(new ArrayList<String>())
                                .token(token).build();
@@ -89,16 +96,16 @@ public class UserService {
             return userRepository.insert(newUser);
         }
     }
-
-    public String getIdByNickname(String nickname) {
-        Optional<User> user= userRepository.findByNickname(nickname);
-
-        if ( user.isPresent() ) {
-            return user.get().getId();
-        } else {
-            throw new RuntimeException();
-        }
-    }
+//
+//    public String getIdByNickname(String nickname) {
+//        Optional<User> user= userRepository.findByNickname(nickname);
+//
+//        if ( user.isPresent() ) {
+//            return user.get().getId();
+//        } else {
+//            throw new RuntimeException();
+//        }
+//    }
 
     @Transactional
     public User addFriendById(String myId, String id) {
@@ -120,29 +127,18 @@ public class UserService {
 
     }
 
-    @Transactional
-    public User updateNickname(String myId, ProfileDto profileDto) {
-        Optional<User> user= userRepository.findById(myId);
-        String newNickname;
+    public boolean isInvalidEmailPattern(String email) {
+        if (email == null) return true;
 
-        if ( user.isPresent() ) {
-            newNickname = profileDto.getNickname();
-            //이미 사용되는 닉네임일 경우
-            if(getIdByNickname(newNickname)!= null){
-                throw new RuntimeException();
-            }
-            else {
-                user.get().setNickname(newNickname);
-                return userRepository.save(user.get());
-            }
-
-        } else {
-            throw new RuntimeException();
+        String regexPattern = "[\\w\\~\\-\\.]+@[\\w\\~\\-]+(\\.[\\w\\~\\-]+)+";
+        if ( Pattern.matches(regexPattern, email.trim()) ) {
+            return false;
         }
 
+        return true;
     }
 
-    private boolean isEmailUser(String email) {
+    public boolean isEmailUser(String email) {
 
         return userRepository.findByEmail(email).isPresent();
     }

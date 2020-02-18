@@ -1,11 +1,12 @@
 package com.na.backend.controller;
 
-import com.na.backend.dto.EmailDto;
-import com.na.backend.dto.ProfileDto;
-import com.na.backend.dto.SocialDto;
+import com.na.backend.dto.LogInDto;
+import com.na.backend.dto.SignUpDto;
 import com.na.backend.entity.User;
+import com.na.backend.exception.AlreadyExistsException;
+import com.na.backend.exception.EntityNotFoundException;
+import com.na.backend.exception.InvalidStringException;
 import com.na.backend.service.UserService;
-import com.na.backend.util.OAuthManager;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -31,36 +32,42 @@ public class UserController {
         this.userService = userService;
     }
 
-    @ApiOperation(value = "회원가입/로그인(kakao, facebook)", notes = "등록된 사용자가 아니면 유저 등록(회원가입)/ 등록된 사용자면 로그인")
-    @PostMapping(value = "/social")
-    public ResponseEntity<Void> socialLogin(@RequestBody SocialDto socialDto, HttpServletResponse response) {
-        String uid = OAuthManager.getUid(socialDto.getProvider(), socialDto.getAccessToken());
-        User user = userService.getUserBySocialService(uid);
+    @ApiOperation(value = "회원가입(이메일)", notes = "등록된 사용자가 아니면 유저 등록(회원가입)/ 등록된 사용자면 로그인")
+    @GetMapping(value = "/email/sign_up")
+    public ResponseEntity<Void> emailSignUp(@RequestBody SignUpDto signUpDto, HttpServletResponse response) {
 
-        response.setHeader("id", user.getId());
-        response.setHeader("token", user.getToken());
+        if (userService.isInvalidEmailPattern(signUpDto.getEmail())) {
+            throw new InvalidStringException("유효하지 않은 이메일 양식입니다");
+        }
 
-        return ResponseEntity.status(HttpStatus.OK).build();
+        if (userService.isEmailUser(signUpDto.getEmail())) {
+            String message = "해당 email(" + signUpDto.getEmail() + "을 가진 유저가 이미 존재합니다";
+            throw new AlreadyExistsException(message);
+        } else {
+            User user = userService.addUserByEmail(signUpDto);
+
+            response.setHeader("id", user.getId());
+            response.setHeader("token", user.getToken());
+
+            return ResponseEntity.status(HttpStatus.OK).build();
+        }
     }
 
-    @ApiOperation(value = "회원가입/로그인(이메일)", notes = "등록된 사용자가 아니면 유저 등록(회원가입)/ 등록된 사용자면 로그인")
-    @PostMapping(value = "/email")
-    public ResponseEntity<Void> emailLogin(@RequestBody EmailDto emailDto, HttpServletResponse response) {
-        User user = userService.getUserByEmail(emailDto);
+    @ApiOperation(value = "로그인(이메일)", notes = "입력한 email 유저가 있으면 로그인 / 없으면 에러 ")
+    @PostMapping(value = "/email/sign_in")
+    public ResponseEntity<String> emailLogin(@RequestBody LogInDto loginDto, HttpServletResponse response) {
 
-        response.setHeader("id", user.getId());
-        response.setHeader("token", user.getToken());
+        if (userService.isEmailUser(loginDto.getEmail())) {
+            User user = userService.getUserByEmail(loginDto);
 
-        return ResponseEntity.status(HttpStatus.OK).build();
-    }
+            response.setHeader("id", user.getId());
+            response.setHeader("token", user.getToken());
 
-    @ApiOperation(value = "닉네임 등록/수정하기", notes = "닉네임 등록 및 수정하기")
-    @PatchMapping(value = "/nickname")
-    public ResponseEntity<User> updateNickname(@RequestBody ProfileDto profileDto, HttpServletRequest request) {
-        String myId = request.getHeader(HEADER_ID);
-        User updatedUser = userService.updateNickname(myId, profileDto);
-
-        return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
+            return ResponseEntity.status(HttpStatus.OK).body("로그인 성공!");
+        } else {
+            String message = "해당 이메일(" + loginDto.getEmail() + ")을 가진 유저가 없습니다.";
+            throw new EntityNotFoundException(message);
+        }
     }
 
     @ApiOperation(value = "즐겨찾기해둔 질문들 보여주기 ", notes = "질문 고를때 즐겨찾기 질문들 보여주기 ")
@@ -83,7 +90,6 @@ public class UserController {
         userService.addBookmark(myId,questionId);
 
         return ResponseEntity.status(HttpStatus.OK).build();
-
     }
 
     @ApiOperation(value = "즐겨찾기 취소", notes = "질문 즐겨찾기 취소하기 ")
