@@ -1,6 +1,5 @@
 package com.na.backend.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,7 +15,9 @@ public class Questionnaire {
     @Id
     private String id;
     private String createUserId;
+    private String createUserName;
     private String receiverId;
+    private String receiverName;
     private String category;
     private Boolean completeFlag;
     private LocalDateTime createdAt;
@@ -26,19 +27,12 @@ public class Questionnaire {
     private Map<String,String> answers;
 
     @Builder
-    public Questionnaire(String id,
-                         String createUserId,
-                         String receiverId,
-                         String category,
-                         Boolean completeFlag,
-                         LocalDateTime createdAt,
-                         LocalDateTime updatedAt,
-                         LocalDateTime answeredAt,
-                         Map<String, String> questions,
-                         Map<String, String> answers) {
+
+    public Questionnaire(String id, String createUserId, String receiverId, String receiverName, String category, Boolean completeFlag, LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime answeredAt, Map<String, String> questions, Map<String, String> answers) {
         this.id = id;
         this.createUserId = createUserId;
         this.receiverId = receiverId;
+        this.receiverName = receiverName;
         this.category = category;
         this.completeFlag = completeFlag;
         this.createdAt = createdAt;

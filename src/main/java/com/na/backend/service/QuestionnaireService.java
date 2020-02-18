@@ -1,5 +1,7 @@
 package com.na.backend.service;
 
+import com.na.backend.dto.InboxQuestionnaireDto;
+import com.na.backend.dto.OutboxQuestionnaireDto;
 import com.na.backend.dto.QuestionnaireAnswerDto;
 import com.na.backend.dto.QuestionnaireDto;
 import com.na.backend.entity.Questionnaire;
@@ -34,14 +36,14 @@ public class QuestionnaireService {
         return questionnaireRepository.save(fillQuestionnaire(questionnaire, questionnaireAnswerDto));
     }
 
-    public List<QuestionnaireDto> getOutboxQuestionnaires(String myId) {
+    public List<OutboxQuestionnaireDto> getOutboxQuestionnaires(String myId) {
 
-        return questionMapper.toQuestionnaireDtos(questionnaireRepository.findByCreateUserId(myId));
+        return questionMapper.toOutboxQuestionnaireDtos(questionnaireRepository.findByCreateUserId(myId));
     }
 
-    public List<QuestionnaireDto> getInboxQuestionnaires(String myId) {
+    public List<InboxQuestionnaireDto> getInboxQuestionnaires(String myId) {
 
-        return questionMapper.toQuestionnaireDtos(questionnaireRepository.findByReceiverId(myId));
+        return questionMapper.toInboxQuestionnaireDtos(questionnaireRepository.findByReceiverId(myId));
     }
 
     public QuestionnaireDto getQuestionnaire(String questionnaireId) {

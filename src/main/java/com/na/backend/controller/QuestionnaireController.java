@@ -1,5 +1,7 @@
 package com.na.backend.controller;
 
+import com.na.backend.dto.InboxQuestionnaireDto;
+import com.na.backend.dto.OutboxQuestionnaireDto;
 import com.na.backend.dto.QuestionnaireAnswerDto;
 import com.na.backend.dto.QuestionnaireDto;
 import com.na.backend.entity.Questionnaire;
@@ -59,7 +61,7 @@ public class QuestionnaireController {
 
     @ApiOperation(value = "보낸 질문지 리스트 보기", notes = "질문자가 자신이 보낸 질문지들을 볼 수 있다. (현재 작성하고있는 질문지도 볼수 있다? => 추후 논의 필요) ")
     @GetMapping("/outbox")
-    public ResponseEntity<List<QuestionnaireDto>> getOutboxQuestionnaireList(HttpServletRequest request) {
+    public ResponseEntity<List<OutboxQuestionnaireDto>> getOutboxQuestionnaireList(HttpServletRequest request) {
         String myId = request.getHeader(HEADER_ID);
 
         return ResponseEntity.status(HttpStatus.OK).body(questionnaireService.getOutboxQuestionnaires(myId));
@@ -67,7 +69,7 @@ public class QuestionnaireController {
 
     @ApiOperation(value = "받은 질문지 리스트 보기", notes = "응답자가 자신이 받은 질문지들과 현재 보내고 있는 질문지들을 볼 수 있다. ")
     @GetMapping("/inbox")
-    public ResponseEntity<List<QuestionnaireDto>> getInboxQuestionnaireList(HttpServletRequest request) {
+    public ResponseEntity<List<InboxQuestionnaireDto>> getInboxQuestionnaireList(HttpServletRequest request) {
         String myId = request.getHeader(HEADER_ID);
 
         return ResponseEntity.status(HttpStatus.OK).body(questionnaireService.getInboxQuestionnaires(myId));

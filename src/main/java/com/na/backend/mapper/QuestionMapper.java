@@ -1,8 +1,6 @@
 package com.na.backend.mapper;
 
-import com.na.backend.dto.NewQuestionDto;
-import com.na.backend.dto.QuestionDto;
-import com.na.backend.dto.QuestionnaireDto;
+import com.na.backend.dto.*;
 import com.na.backend.entity.Question;
 import com.na.backend.entity.Questionnaire;
 import com.na.backend.entity.User;
@@ -50,18 +48,33 @@ public class QuestionMapper {
                 .build();
     }
 
-    public List<QuestionnaireDto> toQuestionnaireDtos(List<Questionnaire> questionnaires) {
-        List<QuestionnaireDto> questionnaireDtos = new ArrayList<>();
+    public List<InboxQuestionnaireDto> toInboxQuestionnaireDtos(List<Questionnaire> questionnaires) {
+        List<InboxQuestionnaireDto> inboxQuestionnaireDtos = new ArrayList<>();
+
         questionnaires.forEach(questionnaire ->
-            questionnaireDtos.add(QuestionnaireDto.builder()
-                                    .receiverId(questionnaire.getReceiverId())
+            inboxQuestionnaireDtos.add(InboxQuestionnaireDto.builder()
+                                    .senderId(questionnaire.getCreateUserId())
+                                    .senderName(questionnaire.getCreateUserName())
                                     .category(questionnaire.getCategory())
-                                    .createdAt(questionnaire.getCreatedAt())
-                                    .questions(questionnaire.getQuestions())
-                                    .answers(questionnaire.getAnswers())
+                                    .questionsCount(questionnaire.getQuestions().size())
                                     .build())
         );
 
-        return questionnaireDtos;
+        return inboxQuestionnaireDtos;
+    }
+
+    public List<OutboxQuestionnaireDto> toOutboxQuestionnaireDtos(List<Questionnaire> questionnaires) {
+        List<OutboxQuestionnaireDto> outboxQuestionnaireDtos = new ArrayList<>();
+
+        questionnaires.forEach(questionnaire ->
+                outboxQuestionnaireDtos.add(OutboxQuestionnaireDto.builder()
+                        .receiverId(questionnaire.getReceiverId())
+                        .receiverName(questionnaire.getReceiverName())
+                        .category(questionnaire.getCategory())
+                        .questionsCount(questionnaire.getQuestions().size())
+                        .build())
+        );
+
+        return outboxQuestionnaireDtos;
     }
 }
