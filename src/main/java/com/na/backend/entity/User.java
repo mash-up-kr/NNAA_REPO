@@ -18,7 +18,7 @@ public class User {
     private String email;
     private String salt;
     private String password;
-    private String nickname;
+    private String name;
     private String provider;
     private String token;
     private List<String> bookmarks;
@@ -30,7 +30,7 @@ public class User {
                 String email,
                 String password,
                 String salt,
-                String nickname,
+                String name,
                 String provider,
                 String token,
                 List<String> bookmarks,
@@ -42,7 +42,7 @@ public class User {
         this.salt = salt;
         this.provider = provider;
         this.token = token;
-        this.nickname = nickname;
+        this.name = name;
         this.bookmarks = bookmarks;
         this.friends = friends;
     }

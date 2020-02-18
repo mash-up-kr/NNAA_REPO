@@ -16,7 +16,7 @@ public class WebConfig implements WebMvcConfigurer {
     private static final String[] ADD_PATHS = {
             "/questionnaire/*",
             "/question/**",
-            "/user/nickname",
+            "/user/name",
             "/friend/*"
     };
 

@@ -25,19 +25,19 @@ public class FriendController {
         this.userService = userService;
     }
 
-    @ApiOperation(value = "닉네임으로 유저찾기", notes = "닉네임으로 다른 유저 찾기")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "nickname", value = "검색할 닉네임", paramType = "path", required = true)
-    })
-    @GetMapping(value = "/nickname/{nickname}")
-    public ResponseEntity<String> searchUserByNickname(@PathVariable String nickname) {
-
-            return ResponseEntity.status(HttpStatus.OK).body(userService.getIdByNickname(nickname));
-    }
+//    @ApiOperation(value = "이름으로 유저찾기", notes = "이름으로 다른 유저 찾기")
+//    @ApiImplicitParams({
+//        @ApiImplicitParam(name = "name", value = "검색할 이름", paramType = "path", required = true)
+//    })
+//    @GetMapping(value = "/nickname/{nickname}")
+//    public ResponseEntity<String> searchUserByNickname(@PathVariable String nickname) {
+//
+//            return ResponseEntity.status(HttpStatus.OK).body(userService.getIdByName(nickname));
+//    }
 
     @ApiOperation(value = "친구 등록하기", notes = "id로 내 친구 등록")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "등록할 친구 아이디", paramType = "path", required = true)
+        @ApiImplicitParam(name = "id", value = "등록할 친구 아이디", paramType = "path", required = true)
     })
     @PatchMapping(value = "/{id}")
     public ResponseEntity<Void> addFriend(@PathVariable String id, HttpServletRequest request) {
