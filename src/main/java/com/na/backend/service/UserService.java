@@ -2,9 +2,11 @@ package com.na.backend.service;
 
 import com.na.backend.dto.LogInDto;
 import com.na.backend.dto.SignUpDto;
+import com.na.backend.entity.Question;
 import com.na.backend.entity.User;
 import com.na.backend.exception.UnauthorizedException;
 import com.na.backend.mapper.UserMapper;
+import com.na.backend.repository.QuestionRepository;
 import com.na.backend.repository.UserRepository;
 import com.na.backend.util.EncryptManager;
 import org.springframework.stereotype.Service;
@@ -21,11 +23,14 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final QuestionRepository questionRepository;
 
     public UserService(UserRepository userRepository,
-                       UserMapper userMapper) {
+                       UserMapper userMapper,
+                       QuestionRepository questionRepository) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.questionRepository = questionRepository;
     }
 
     public Boolean isUser(String id, String token) {
@@ -150,15 +155,27 @@ public class UserService {
 
     public List<String> getUserBookmark(String myId) {
         Optional<User> user= userRepository.findById(myId);
-        List<String> userBookmark;
-
+        List<String> userBookmarkIds;
+        List<String> userBookmarkContents = null;
         if ( user.isPresent() ) {
-            userBookmark = user.get().getBookmarks();
-            return userBookmark;
+
+            userBookmarkIds = user.get().getBookmarks();
+
+            if(userBookmarkIds != null){
+                for(int i=0;i<userBookmarkIds.size();i++){
+                    String questionId = userBookmarkIds.get(i);
+                    Optional<Question> userBookmarkQuestion = questionRepository.findById(questionId);
+
+                    userBookmarkContents.add(userBookmarkQuestion.get().getContent());
+                }
+                return userBookmarkContents;
+            }
+            else{
+                throw new RuntimeException();
+            }
         } else {
             throw new RuntimeException();
         }
-
     }
 
     @Transactional
