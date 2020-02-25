@@ -1,10 +1,13 @@
 package com.na.backend.exception;
 
-public class UnauthorizedException extends RuntimeException {
-    private static final long serialVersionUID = 1L;
-    private String errMessage;
+import org.springframework.http.HttpStatus;
 
-    public UnauthorizedException(String errMessage) {
-        this.errMessage = errMessage;
+public class UnauthorizedException extends BaseException {
+
+    public UnauthorizedException(String message) {
+        super(ApiError.builder()
+                .httpStatus(HttpStatus.BAD_REQUEST)
+                .message("[ UnauthorizedException ]\n" + message)
+                .build());
     }
 }

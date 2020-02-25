@@ -78,7 +78,7 @@ public class OAuthManager {
                 }
                 break;
             default:
-                throw new InvalidProviderException();
+                throw new InvalidProviderException("The provider("+provider+") is not supported!");
         }
 
         return userId;

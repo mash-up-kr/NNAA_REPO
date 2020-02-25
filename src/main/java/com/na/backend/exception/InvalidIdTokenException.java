@@ -1,5 +1,14 @@
 package com.na.backend.exception;
 
-public class InvalidIdTokenException extends RuntimeException {
-    private static final long serialVersionUID = 1L;
+import org.springframework.http.HttpStatus;
+
+public class InvalidIdTokenException extends BaseException {
+
+    public InvalidIdTokenException(String message) {
+        super(ApiError.builder()
+                .httpStatus(HttpStatus.BAD_REQUEST)
+                .message("[ InvalidIdTokenException ]\n" + message)
+                .build());
+    }
 }
+

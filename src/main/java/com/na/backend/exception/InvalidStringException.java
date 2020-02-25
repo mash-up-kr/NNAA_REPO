@@ -2,12 +2,12 @@ package com.na.backend.exception;
 
 import org.springframework.http.HttpStatus;
 
-public class InvalidProviderException extends BaseException {
+public class InvalidStringException extends BaseException {
 
-    public InvalidProviderException(String message) {
+    public InvalidStringException(String message) {
         super(ApiError.builder()
                 .httpStatus(HttpStatus.BAD_REQUEST)
-                .message("[ InvalidProviderException ]\n" + message)
+                .message("[ InvalidStringException ]\n" + message)
                 .build());
     }
 }
