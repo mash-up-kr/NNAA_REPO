@@ -99,7 +99,7 @@ public class UserService {
                                .uid(uid)
                                .name("")
                                .salt(salt)
-                               .bookmarks(new ArrayList<String>())
+                               .bookmarks(new ArrayList<>())
                                .token(token).build();
 
             return userRepository.insert(newUser);
@@ -168,29 +168,16 @@ public class UserService {
         return userRepository.findByUid(uid).isPresent();
     }
 
-    public List<String> getUserBookmark(String myId) {
-        Optional<User> user= userRepository.findById(myId);
-        List<String> userBookmarkIds;
-        List<String> userBookmarkContents = null;
-        if ( user.isPresent() ) {
+    public List<Question> getUserBookmark(String myId) {
+        User user= userRepository.findById(myId).get();
 
-            userBookmarkIds = user.get().getBookmarks();
+        List<String> userBookmarkIds = user.getBookmarks();
 
-            if(userBookmarkIds != null){
-                for(int i=0;i<userBookmarkIds.size();i++){
-                    String questionId = userBookmarkIds.get(i);
-                    Optional<Question> userBookmarkQuestion = questionRepository.findById(questionId);
-
-                    userBookmarkContents.add(userBookmarkQuestion.get().getContent());
-                }
-                return userBookmarkContents;
-            }
-            else{
-                throw new RuntimeException();
-            }
-        } else {
-            throw new RuntimeException();
+        if (userBookmarkIds.size() == 0) {
+            throw new EntityNotFoundException("There's nothing on your list of bookmark!");
         }
+
+        return questionRepository.findQuestionsByIdIn(userBookmarkIds);
     }
 
     @Transactional

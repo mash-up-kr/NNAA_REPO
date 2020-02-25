@@ -4,6 +4,7 @@ import com.na.backend.dto.LogInDto;
 import com.na.backend.dto.SignUpDto;
 import com.na.backend.dto.UserAuthDto;
 import com.na.backend.dto.UserInfoDto;
+import com.na.backend.entity.Question;
 import com.na.backend.entity.User;
 import com.na.backend.exception.AlreadyExistsException;
 import com.na.backend.exception.EntityNotFoundException;
@@ -103,13 +104,11 @@ public class UserController {
 
     @ApiOperation(value = "즐겨찾기해둔 질문들 보여주기 ", notes = "질문 고를때 즐겨찾기 질문들 보여주기 ")
     @GetMapping("/bookmark")
-    public ResponseEntity<List<String>> getBookmarkList(HttpServletRequest request) {
+    public ResponseEntity<List<Question>> getBookmarkList(HttpServletRequest request) {
         String myId = request.getHeader(HEADER_ID);
-        List<String> userBookmark = userService.getUserBookmark(myId);
 
-        return ResponseEntity.status(HttpStatus.OK).body(userBookmark);
+        return ResponseEntity.status(HttpStatus.OK).body(userService.getUserBookmark(myId));
     }
-
 
     @ApiOperation(value = "즐겨찾기 등록", notes = "질문 즐겨찾기 등록하기 ")
     @ApiImplicitParams({

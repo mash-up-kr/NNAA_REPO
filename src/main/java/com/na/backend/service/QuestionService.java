@@ -5,6 +5,7 @@ import com.na.backend.dto.QuestionnaireDto;
 import com.na.backend.entity.Question;
 import com.na.backend.entity.Questionnaire;
 import com.na.backend.entity.User;
+import com.na.backend.exception.InvalidCategoryException;
 import com.na.backend.mapper.QuestionMapper;
 import com.na.backend.repository.QuestionRepository;
 import com.na.backend.repository.QuestionnaireRepository;
@@ -49,6 +50,32 @@ public class QuestionService {
         }
 
         return questionRepository.findQuestionsByIdIn(selectedQuestionIds);
+    }
+
+    // TODO: dto 생성시에 체크할 수 있도록 util 로 빼기
+    public Boolean isInvalidCategory(String category) {
+        if (category == null) return true;
+
+        for ( Category c : Category.values() ){
+            if (category.equals(c.value())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    // TODO: dto 생성시에 체크할 수 있도록 util 로 빼기
+    public Boolean isInvalidType(String type) {
+        if (type == null) return true;
+
+        for ( Type t : Type.values() ){
+            if (type.equals(t.value())) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public Question insertNewQuestion(NewQuestionDto newQuestionDto) {

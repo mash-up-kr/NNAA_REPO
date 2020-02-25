@@ -3,6 +3,7 @@ package com.na.backend.controller;
 import com.na.backend.dto.*;
 import com.na.backend.entity.Question;
 import com.na.backend.exception.InvalidCategoryException;
+import com.na.backend.exception.InvalidTypeException;
 import com.na.backend.service.Category;
 import com.na.backend.service.QuestionService;
 import io.swagger.annotations.Api;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @Api(value="질문 API")
 @Controller
@@ -28,9 +28,20 @@ public class QuestionController {
         this.questionService = questionService;
     }
 
-    @ApiOperation(value = "질문 입력하기", notes = "질문등록하기 ")
+    @ApiOperation(value = "직접 질문 입력해서 질문 추가하기", notes = "")
     @PostMapping
     public ResponseEntity<Question> insertQuestion(@RequestBody NewQuestionDto newQuestionDto){
+        String category = newQuestionDto.getCategory();
+        String type = newQuestionDto.getType();
+
+        if(questionService.isInvalidCategory(category)) {
+            throw new InvalidCategoryException("Invalid category("+category+")!");
+        }
+
+        if(questionService.isInvalidType(type)) {
+            throw new InvalidTypeException("Invalid type("+type+")!");
+        }
+
         Question newQuestion = questionService.insertNewQuestion(newQuestionDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(newQuestion);
@@ -56,16 +67,7 @@ public class QuestionController {
     })
     @GetMapping("/random")
     public ResponseEntity<List<Question>> getRandomQuestions(@RequestParam String category, @RequestParam(defaultValue = "30") Integer size) {
-        Boolean isInValidCategory = true;
-
-        for ( Category c : Category.values() ){
-            if (category.equals(c.value())) {
-                isInValidCategory = false;
-                break;
-            }
-        }
-
-        if (isInValidCategory) {
+        if(questionService.isInvalidCategory(category)) {
             throw new InvalidCategoryException("Invalid category("+category+")!");
         }
 

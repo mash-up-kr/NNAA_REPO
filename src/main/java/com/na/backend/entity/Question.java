@@ -26,4 +26,14 @@ public class Question {
         this.choices = choices;
     }
 
+    @Override
+    public String toString() {
+        return "Question{" +
+                "id='" + id + '\'' +
+                ", content='" + content + '\'' +
+                ", category='" + category + '\'' +
+                ", type='" + type + '\'' +
+                ", choices=" + choices +
+                '}';
+    }
 }
