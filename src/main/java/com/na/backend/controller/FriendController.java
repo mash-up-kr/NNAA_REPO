@@ -1,5 +1,6 @@
 package com.na.backend.controller;
 
+import com.na.backend.entity.User;
 import com.na.backend.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 
 @Api(value="friend API")
@@ -29,10 +31,10 @@ public class FriendController {
 //    @ApiImplicitParams({
 //        @ApiImplicitParam(name = "name", value = "검색할 이름", paramType = "path", required = true)
 //    })
-//    @GetMapping(value = "/nickname/{nickname}")
-//    public ResponseEntity<String> searchUserByNickname(@PathVariable String nickname) {
+//    @GetMapping(value = "/{name}")
+//    public ResponseEntity<List<User>> searchUserByName(@PathVariable String name) {
 //
-//            return ResponseEntity.status(HttpStatus.OK).body(userService.getIdByName(nickname));
+//        return ResponseEntity.status(HttpStatus.OK).body(userService.findUsers(name));
 //    }
 
     @ApiOperation(value = "친구 등록하기", notes = "id로 내 친구 등록")

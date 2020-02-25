@@ -2,8 +2,11 @@ package com.na.backend.service;
 
 import com.na.backend.dto.LogInDto;
 import com.na.backend.dto.SignUpDto;
+import com.na.backend.dto.UserAuthDto;
+import com.na.backend.dto.UserInfoDto;
 import com.na.backend.entity.Question;
 import com.na.backend.entity.User;
+import com.na.backend.exception.EntityNotFoundException;
 import com.na.backend.exception.UnauthorizedException;
 import com.na.backend.mapper.UserMapper;
 import com.na.backend.repository.QuestionRepository;
@@ -44,9 +47,10 @@ public class UserService {
     }
 
     @Transactional
-    public User addUserByEmail(SignUpDto signUpDto) {
+    public UserAuthDto addUserByEmail(SignUpDto signUpDto) {
         String userEmail = signUpDto.getEmail();
         String userPassword = signUpDto.getPassword();
+        String userName = signUpDto.getName();
 
         String salt = EncryptManager.generateSalt();
         String encryptPassword = EncryptManager.encryptPlainString(userPassword, salt);
@@ -54,18 +58,18 @@ public class UserService {
 
         User newUser = User.builder()
                            .email(userEmail)
-                           .name("")
+                           .name(userName)
                            .password(encryptPassword)
                            .salt(salt)
-                           .bookmarks(new ArrayList<String>())
+                           .bookmarks(new ArrayList<>())
                            .token(token)
                            .build();
 
-        return userRepository.insert(newUser);
+        return userMapper.toUserAuthDto(userRepository.insert(newUser));
     }
 
     @Transactional
-    public User getUserByEmail(LogInDto loginDto) {
+    public UserAuthDto getUserByEmail(LogInDto loginDto) {
         String userEmail = loginDto.getEmail();
         String userPassword = loginDto.getPassword();
 
@@ -74,7 +78,7 @@ public class UserService {
         String encryptPassword = EncryptManager.encryptPlainString(userPassword, userSalt);
 
         if (encryptPassword.equals(user.getPassword())) {
-            return user;
+            return userMapper.toUserAuthDto(user);
         } else {
             throw new UnauthorizedException("invalid password");
         }
@@ -101,16 +105,16 @@ public class UserService {
             return userRepository.insert(newUser);
         }
     }
-//
-//    public String getIdByNickname(String nickname) {
-//        Optional<User> user= userRepository.findByNickname(nickname);
-//
-//        if ( user.isPresent() ) {
-//            return user.get().getId();
-//        } else {
-//            throw new RuntimeException();
-//        }
-//    }
+
+    public List<UserInfoDto> findUsers(String name) {
+        List<User> users = userRepository.findUsersByName(name);
+
+        if (users.size() == 0) {
+            throw new EntityNotFoundException("no user for name("+name+")");
+        }
+
+        return userMapper.toUserInfoDtos(users);
+    }
 
     @Transactional
     public User addFriendById(String myId, String id) {
@@ -130,6 +134,17 @@ public class UserService {
             throw new RuntimeException();
         }
 
+    }
+
+    public boolean isInvalidNamePattern(String name) {
+        if (name == null) return true;
+
+        String regexPattern = "^[가-힣a-zA-Z]+$";
+        if ( Pattern.matches(regexPattern, name.trim()) ) {
+            return false;
+        }
+
+        return true;
     }
 
     public boolean isInvalidEmailPattern(String email) {

@@ -2,6 +2,8 @@ package com.na.backend.controller;
 
 import com.na.backend.dto.LogInDto;
 import com.na.backend.dto.SignUpDto;
+import com.na.backend.dto.UserAuthDto;
+import com.na.backend.dto.UserInfoDto;
 import com.na.backend.entity.User;
 import com.na.backend.exception.AlreadyExistsException;
 import com.na.backend.exception.EntityNotFoundException;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.net.URLEncoder;
 import java.util.List;
 
 
@@ -33,41 +36,69 @@ public class UserController {
     }
 
     @ApiOperation(value = "회원가입(이메일)", notes = "등록된 사용자가 아니면 유저 등록(회원가입)/ 등록된 사용자면 로그인")
-    @GetMapping(value = "/email/sign_up")
-    public ResponseEntity<Void> emailSignUp(@RequestBody SignUpDto signUpDto, HttpServletResponse response) {
+    @PostMapping(value = "/email")
+    public ResponseEntity<UserAuthDto> emailSignUp(@RequestBody SignUpDto signUpDto, HttpServletResponse response) {
+        String email = signUpDto.getEmail();
+        String name = signUpDto.getName();
 
-        if (userService.isInvalidEmailPattern(signUpDto.getEmail())) {
-            throw new InvalidStringException("유효하지 않은 이메일 양식입니다");
+        if (userService.isInvalidNamePattern(name)) {
+            throw new InvalidStringException("유효하지 않은 이름 형식입니다("+name+")");
         }
 
-        if (userService.isEmailUser(signUpDto.getEmail())) {
-            String message = "해당 email(" + signUpDto.getEmail() + "을 가진 유저가 이미 존재합니다";
+        if (userService.isInvalidEmailPattern(email)) {
+            throw new InvalidStringException("유효하지 않은 이메일 형식입니다("+email+")");
+        }
+
+        if (userService.isEmailUser(email)) {
+            String message = "해당 email(" + email + ")을 가진 유저가 이미 존재합니다";
             throw new AlreadyExistsException(message);
         } else {
-            User user = userService.addUserByEmail(signUpDto);
+            UserAuthDto userAuthDto = userService.addUserByEmail(signUpDto);
 
-            response.setHeader("id", user.getId());
-            response.setHeader("token", user.getToken());
+            // TODO: 삭제 예정 ( 헤더가 아닌 바디에 넣기로 )
+            response.setHeader("id", userAuthDto.getId());
+            response.setHeader("token", userAuthDto.getToken());
 
-            return ResponseEntity.status(HttpStatus.OK).build();
+            return ResponseEntity.status(HttpStatus.OK).body(userAuthDto);
         }
     }
 
     @ApiOperation(value = "로그인(이메일)", notes = "입력한 email 유저가 있으면 로그인 / 없으면 에러 ")
-    @PostMapping(value = "/email/sign_in")
-    public ResponseEntity<String> emailLogin(@RequestBody LogInDto loginDto, HttpServletResponse response) {
+    @GetMapping(value = "/email")
+    public ResponseEntity<UserAuthDto> emailLogin(@RequestBody LogInDto loginDto, HttpServletResponse response) {
+
+        if (userService.isInvalidEmailPattern(loginDto.getEmail())) {
+            throw new InvalidStringException("유효하지 않은 이메일 양식입니다");
+        }
 
         if (userService.isEmailUser(loginDto.getEmail())) {
-            User user = userService.getUserByEmail(loginDto);
+            UserAuthDto userAuthDto = userService.getUserByEmail(loginDto);
 
-            response.setHeader("id", user.getId());
-            response.setHeader("token", user.getToken());
+            // TODO: 삭제 예정 ( 헤더가 아닌 바디에 넣기로 )
+            response.setHeader("id", userAuthDto.getId());
+            response.setHeader("token", userAuthDto.getToken());
 
-            return ResponseEntity.status(HttpStatus.OK).body("로그인 성공!");
+            return ResponseEntity.status(HttpStatus.OK).body(userAuthDto);
         } else {
             String message = "해당 이메일(" + loginDto.getEmail() + ")을 가진 유저가 없습니다.";
             throw new EntityNotFoundException(message);
         }
+    }
+
+    @ApiOperation(value = "로그인(카카오/페이스북)", notes = "추후 제작")
+    @GetMapping(value = "/social")
+    public ResponseEntity<String> socialLogin(@RequestParam String provider, @RequestParam String token) {
+        return ResponseEntity.status(HttpStatus.OK).body("소셜로그인 아직 제공하지 않음");
+    }
+
+    @ApiOperation(value = "이름으로 유저찾기", notes = "이름으로 다른 유저 찾기")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "name", value = "검색할 이름", paramType = "query", required = true)
+    })
+    @GetMapping
+    public ResponseEntity<List<UserInfoDto>> searchUserByName(@RequestParam String name) {
+
+        return ResponseEntity.status(HttpStatus.OK).body(userService.findUsers(name));
     }
 
     @ApiOperation(value = "즐겨찾기해둔 질문들 보여주기 ", notes = "질문 고를때 즐겨찾기 질문들 보여주기 ")
