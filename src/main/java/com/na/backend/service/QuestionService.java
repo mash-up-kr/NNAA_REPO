@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Service
 public class QuestionService {
@@ -31,6 +32,23 @@ public class QuestionService {
         this.questionnaireRepository = questionnaireRepository;
         this.userRepository = userRepository;
         this.questionMapper = questionMapper;
+    }
+
+    public List<Question> getRandomQuestions(String category, Integer size) {
+        List<String> questionIds = new ArrayList<>();
+
+        questionRepository.getQuestionIdsByCategory(category)
+                .forEach( question -> questionIds.add(question.getId()));
+
+        List<String> selectedQuestionIds = new ArrayList<>();
+
+        Random random = new Random();
+        Integer idsLength = questionIds.size();
+        for( int i = 0; i < size; i++ ) {
+            selectedQuestionIds.add(questionIds.get(random.nextInt(idsLength)));
+        }
+
+        return questionRepository.findQuestionsByIdIn(selectedQuestionIds);
     }
 
     public Question insertNewQuestion(NewQuestionDto newQuestionDto) {
