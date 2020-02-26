@@ -15,6 +15,7 @@ import com.na.backend.util.EncryptManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.constraints.Null;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,13 +38,9 @@ public class UserService {
     }
 
     public Boolean isUser(String id, String token) {
-        Optional<User> user = userRepository.findById(id);
 
-        if(user.isPresent()){
-            return token.equals(user.get().getToken());
-        } else {
-            throw new RuntimeException("invalid id");
-        }
+        User user = userRepository.findById(id).orElseThrow(()-> new RuntimeException("invalid id"));
+        return token.equals(user.getToken());
     }
 
     @Transactional
@@ -118,18 +115,13 @@ public class UserService {
 
     @Transactional
     public User addFriendById(String myId, String id) {
-        Optional<User> user= userRepository.findById(myId);
-        List<String> userFriends;
 
-        if ( user.isPresent() ) {
-            userFriends = user.get().getFriends();
+        User user = userRepository.findById(myId).orElseThrow(RuntimeException::new);
+        List<String> userFriends = user.getFriends();
 
-            if(!userFriends.contains(id)) {
-                userFriends.add(id);
-                return userRepository.save(user.get());
-            } else {
-                throw new RuntimeException();
-            }
+        if(!userFriends.contains(id)) {
+            userFriends.add(id);
+            return userRepository.save(user);
         } else {
             throw new RuntimeException();
         }
@@ -169,7 +161,8 @@ public class UserService {
     }
 
     public List<Question> getUserBookmark(String myId) {
-        User user= userRepository.findById(myId).get();
+
+        User user = userRepository.findById(myId).orElseThrow(RuntimeException::new);
 
         List<String> userBookmarkIds = user.getBookmarks();
 
@@ -182,41 +175,35 @@ public class UserService {
 
     @Transactional
     public User addBookmark(String myId, String questionId) {
-        Optional<User> user= userRepository.findById(myId);
-        List<String> userBookmark;
 
-        if ( user.isPresent() ) {
-            userBookmark = user.get().getBookmarks();
+        User user = userRepository.findById(myId).orElseThrow(RuntimeException::new);
 
-            if(!userBookmark.contains(questionId)) {
-                userBookmark.add(questionId);
-                return userRepository.save(user.get());
-            } else {
-                throw new RuntimeException();
-            }
+        List<String> userBookmark = user.getBookmarks();
+
+        if(!userBookmark.contains(questionId)) {
+            userBookmark.add(questionId);
+            return userRepository.save(user);
         } else {
             throw new RuntimeException();
         }
+
     }
 
     @Transactional
     public User dropBookmark(String myId, String questionId) {
-        Optional<User> user= userRepository.findById(myId);
-        List<String> userBookmark;
 
-        if ( user.isPresent() ) {
-            userBookmark = user.get().getBookmarks();
+        User user = userRepository.findById(myId).orElseThrow(RuntimeException::new);
+
+        List<String> userBookmark = user.getBookmarks();
 
             if(userBookmark.contains(questionId)){
                 userBookmark.remove(questionId);
-                return userRepository.save(user.get());
+                return userRepository.save(user);
 
             } else {
                 throw new RuntimeException();
-            }
 
-        } else {
-            throw new RuntimeException();
-        }
+            }
     }
+
 }
