@@ -39,7 +39,7 @@ public class UserService {
 
     public Boolean isUser(String id, String token) {
 
-        User user = userRepository.findById(id).orElseThrow(()-> new RuntimeException("invalid id"));
+        User user = userRepository.findById(id).orElseThrow(RuntimeException::new);//.orElseThrow(()-> new RuntimeException("invalid id"));
         return token.equals(user.getToken());
     }
 

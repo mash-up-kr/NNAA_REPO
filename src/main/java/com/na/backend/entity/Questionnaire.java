@@ -27,10 +27,10 @@ public class Questionnaire {
     private Map<String,String> answers;
 
     @Builder
-
-    public Questionnaire(String id, String createUserId, String receiverId, String receiverName, String category, Boolean completeFlag, LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime answeredAt, Map<String, String> questions, Map<String, String> answers) {
+    public Questionnaire(String id, String createUserId,String createUserName, String receiverId, String receiverName, String category, Boolean completeFlag, LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime answeredAt, Map<String, String> questions, Map<String, String> answers) {
         this.id = id;
         this.createUserId = createUserId;
+        this.createUserName = createUserName;
         this.receiverId = receiverId;
         this.receiverName = receiverName;
         this.category = category;
@@ -41,4 +41,6 @@ public class Questionnaire {
         this.questions = questions;
         this.answers = answers;
     }
+
+
 }

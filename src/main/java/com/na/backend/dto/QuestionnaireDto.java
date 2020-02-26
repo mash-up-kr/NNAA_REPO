@@ -15,18 +15,24 @@ import java.util.Map;
 @NoArgsConstructor
 public class QuestionnaireDto {
 
+    private String createUserName;
     private String receiverId;
+    private String receiverName;
     private String category;
     private LocalDateTime createdAt;
     private Map<String, String> questions;
     private Map<String, String> answers;
 
     @Builder
-    public QuestionnaireDto(String receiverId,
+    public QuestionnaireDto(String createUserName,
+                            String receiverId,
+                            String receiverName,
                             String category,
                             LocalDateTime createdAt,
                             Map<String, String> questions,
                             Map<String, String> answers) {
+        this.createUserName = createUserName;
+        this.receiverName = receiverName;
         this.receiverId = receiverId;
         this.category = category;
         this.createdAt = createdAt;
