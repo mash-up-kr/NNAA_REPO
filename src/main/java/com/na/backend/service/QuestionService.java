@@ -78,6 +78,14 @@ public class QuestionService {
         return true;
     }
 
+    // TODO: dto 생성시에 체크할 수 있도록 util 로 빼기
+    public Boolean isInvalidQuestionId(String questionId) {
+        if (questionId == null) return true;
+
+        return !questionRepository.findById(questionId).isPresent();
+    }
+
+
     public Question insertNewQuestion(NewQuestionDto newQuestionDto) {
         return questionRepository.insert(questionMapper.toQuestion(newQuestionDto));
     }
