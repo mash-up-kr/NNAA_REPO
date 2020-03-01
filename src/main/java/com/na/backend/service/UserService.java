@@ -44,7 +44,6 @@ public class UserService {
         return token.equals(user.getToken());
     }
 
-    @Transactional
     public UserAuthDto addUserByEmail(SignUpDto signUpDto) {
         String userEmail = signUpDto.getEmail();
         String userPassword = signUpDto.getPassword();
@@ -66,7 +65,6 @@ public class UserService {
         return userMapper.toUserAuthDto(userRepository.insert(newUser));
     }
 
-    @Transactional
     public UserAuthDto getUserByEmail(LogInDto loginDto) {
         String userEmail = loginDto.getEmail();
         String userPassword = loginDto.getPassword();
@@ -87,7 +85,6 @@ public class UserService {
         Optional<User> user = userRepository.findByUid(uid);
 
         if ( isSocialUser(uid) ) {
-
             return userRepository.findByUid(uid).get();
         } else {
             String salt = EncryptManager.generateSalt();
@@ -174,41 +171,30 @@ public class UserService {
         return questionRepository.findQuestionsByIdIn(userBookmarkIds);
     }
 
-    @Transactional
     public User addBookmark(String myId, String questionId) {
 
         User user = userRepository.findById(myId).get();
-
         List<String> userBookmark = user.getBookmarks();
 
         if(userBookmark.contains(questionId)) {
-            throw new AlreadyExistsException("question("+questionId+")on your list of bookmark!");
-        }
-
-        if(!userBookmark.contains(questionId)) {
+            throw new AlreadyExistsException("the question(id:"+questionId+") is already on your list of bookmark!");
+        } else {
             userBookmark.add(questionId);
             return userRepository.save(user);
-        } else {
-            throw new RuntimeException();
         }
-
     }
 
-    @Transactional
     public User dropBookmark(String myId, String questionId) {
 
-        User user = userRepository.findById(myId).orElseThrow(RuntimeException::new);
-
+        User user = userRepository.findById(myId).get();
         List<String> userBookmark = user.getBookmarks();
 
-            if(userBookmark.contains(questionId)){
-                userBookmark.remove(questionId);
-                return userRepository.save(user);
-
-            } else {
-                throw new RuntimeException();
-
-            }
+        if(userBookmark.contains(questionId)){
+            userBookmark.remove(questionId);
+            return userRepository.save(user);
+        } else {
+            throw new EntityNotFoundException("the question(id:"+questionId+") is not on your list of bookmark!");
+        }
     }
 
 }

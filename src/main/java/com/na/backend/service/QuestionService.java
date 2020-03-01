@@ -5,7 +5,6 @@ import com.na.backend.dto.QuestionnaireDto;
 import com.na.backend.entity.Question;
 import com.na.backend.entity.Questionnaire;
 import com.na.backend.entity.User;
-import com.na.backend.exception.InvalidCategoryException;
 import com.na.backend.mapper.QuestionMapper;
 import com.na.backend.repository.QuestionRepository;
 import com.na.backend.repository.QuestionnaireRepository;
