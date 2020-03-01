@@ -6,6 +6,7 @@ import com.na.backend.dto.UserAuthDto;
 import com.na.backend.dto.UserInfoDto;
 import com.na.backend.entity.Question;
 import com.na.backend.entity.User;
+import com.na.backend.exception.AlreadyExistsException;
 import com.na.backend.exception.EntityNotFoundException;
 import com.na.backend.exception.UnauthorizedException;
 import com.na.backend.mapper.UserMapper;
@@ -162,7 +163,7 @@ public class UserService {
 
     public List<Question> getUserBookmark(String myId) {
 
-        User user = userRepository.findById(myId).orElseThrow(RuntimeException::new);
+        User user = userRepository.findById(myId).get();
 
         List<String> userBookmarkIds = user.getBookmarks();
 
@@ -176,9 +177,13 @@ public class UserService {
     @Transactional
     public User addBookmark(String myId, String questionId) {
 
-        User user = userRepository.findById(myId).orElseThrow(RuntimeException::new);
+        User user = userRepository.findById(myId).get();
 
         List<String> userBookmark = user.getBookmarks();
+
+        if(userBookmark.contains(questionId)) {
+            throw new AlreadyExistsException("question("+questionId+")on your list of bookmark!");
+        }
 
         if(!userBookmark.contains(questionId)) {
             userBookmark.add(questionId);
