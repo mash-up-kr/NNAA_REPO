@@ -21,13 +21,16 @@ public class QuestionMapper {
                 .build();
     }
 
-    public Questionnaire toQuestionnaire(String createUserId, QuestionnaireDto questionnaireDto) {
+    public Questionnaire toQuestionnaireWhenNew(User createUser, User receiver, NewQuestionnaireDto newQuestionnaireDto) {
         return Questionnaire.builder()
-                .createUserId(createUserId)
-                .receiverId(questionnaireDto.getReceiverId())
-                .category(questionnaireDto.getCategory())
-                .questions(questionnaireDto.getQuestions())
-                .createdAt(questionnaireDto.getCreatedAt())
+                .createUserId(createUser.getId())
+                .createUserName(createUser.getName())
+                .receiverId(receiver.getId())
+                .receiverName(receiver.getName())
+                .completeFlag(Boolean.FALSE)
+                .category(newQuestionnaireDto.getCategory())
+                .questions(newQuestionnaireDto.getQuestions())
+                .createdAt(newQuestionnaireDto.getCreatedAt())
                 .build();
     }
 
@@ -37,14 +40,6 @@ public class QuestionMapper {
                 .category(question.getCategory())
                 .content(question.getContent())
                 .choices(question.getChoices())
-                .build();
-    }
-
-    public QuestionnaireDto toQuestionnaireDto(Questionnaire questionnaire) {
-        return QuestionnaireDto.builder()
-                .receiverId(questionnaire.getReceiverId())
-                .category(questionnaire.getCategory())
-                .createdAt(questionnaire.getCreatedAt())
                 .build();
     }
 

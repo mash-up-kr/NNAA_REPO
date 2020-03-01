@@ -1,6 +1,5 @@
 package com.na.backend.controller;
 
-import com.na.backend.entity.User;
 import com.na.backend.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -11,9 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.List;
-
 
 @Api(value="friend API")
 @RestController

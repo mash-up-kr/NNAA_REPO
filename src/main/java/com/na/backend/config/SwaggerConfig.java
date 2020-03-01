@@ -28,7 +28,7 @@ public class SwaggerConfig {
     private ApiInfo apiInfo() {
         ApiInfo apiInfo = new ApiInfo(
                 "너나알아 Api",
-                "참고 : 친구/즐겨찾기/닉네임 미완성",
+                "참고 : 문제지",
                 "1.0",
                 "Terms of Service URL",
                 "contact Name",

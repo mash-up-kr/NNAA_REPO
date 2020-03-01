@@ -1,6 +1,5 @@
 package com.na.backend.dto;
 
-
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,19 +17,15 @@ public class NewQuestionnaireDto {
     private String category;
     private LocalDateTime createdAt;
     private Map<String, String> questions;
-    private Map<String, String> answers;
 
     @Builder
     public NewQuestionnaireDto(String receiverId,
                                String category,
                                LocalDateTime createdAt,
-                               Map<String, String> questions,
-                               Map<String, String> answers) {
+                               Map<String, String> questions) {
         this.receiverId = receiverId;
         this.category = category;
         this.createdAt = createdAt;
         this.questions = questions;
-        this.answers = answers;
     }
-
 }

@@ -4,7 +4,6 @@ import com.na.backend.dto.*;
 import com.na.backend.entity.Question;
 import com.na.backend.exception.InvalidCategoryException;
 import com.na.backend.exception.InvalidTypeException;
-import com.na.backend.service.Category;
 import com.na.backend.service.QuestionService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;

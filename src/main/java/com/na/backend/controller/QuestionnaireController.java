@@ -1,9 +1,6 @@
 package com.na.backend.controller;
 
-import com.na.backend.dto.InboxQuestionnaireDto;
-import com.na.backend.dto.OutboxQuestionnaireDto;
-import com.na.backend.dto.QuestionnaireAnswerDto;
-import com.na.backend.dto.QuestionnaireDto;
+import com.na.backend.dto.*;
 import com.na.backend.entity.Questionnaire;
 import com.na.backend.service.QuestionnaireService;
 import io.swagger.annotations.Api;
@@ -32,9 +29,9 @@ public class QuestionnaireController {
 
     @ApiOperation(value = "질문지 보내기", notes = "질문지를 1~20까지 작성후 전송 ")
     @PostMapping
-    public ResponseEntity<Questionnaire> sendQuestionnaire(@RequestBody QuestionnaireDto questionnaireDto, HttpServletRequest request) {
+    public ResponseEntity<Questionnaire> sendQuestionnaire(@RequestBody NewQuestionnaireDto newQuestionnaireDto, HttpServletRequest request) {
         String myId = request.getHeader(HEADER_ID);
-        return ResponseEntity.status(HttpStatus.OK).body(questionnaireService.createQuestionnaire(myId, questionnaireDto));
+        return ResponseEntity.status(HttpStatus.OK).body(questionnaireService.createQuestionnaire(myId, newQuestionnaireDto));
     }
 
     @ApiOperation(value = "질문지에 답변하기", notes = "질문지에 응답하기")
@@ -43,8 +40,7 @@ public class QuestionnaireController {
     })
     @PatchMapping("/{questionnaireId}")
     public ResponseEntity<Questionnaire> answerQuestionnaire(@PathVariable String questionnaireId ,
-                                                             @RequestBody QuestionnaireAnswerDto questionnaireAnswerDto) {
-
+                                                             @RequestBody AnswerQuestionnaireDto questionnaireAnswerDto) {
         return ResponseEntity.status(HttpStatus.OK).body(questionnaireService.insertAnswer(questionnaireId, questionnaireAnswerDto));
     }
 
@@ -53,7 +49,7 @@ public class QuestionnaireController {
             @ApiImplicitParam(name = "questionnaireId", value = "질문지 번호", paramType = "path", required = true)
     })
     @GetMapping("/{questionnaireId}")
-    public ResponseEntity<QuestionnaireDto> getQuestionnaire(@PathVariable String questionnaireId) {
+    public ResponseEntity<Questionnaire> getQuestionnaire(@PathVariable String questionnaireId) {
 
         return ResponseEntity.status(HttpStatus.OK).body(questionnaireService.getQuestionnaire(questionnaireId));
     }
