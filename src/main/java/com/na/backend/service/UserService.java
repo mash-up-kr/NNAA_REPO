@@ -6,6 +6,7 @@ import com.na.backend.dto.UserAuthDto;
 import com.na.backend.dto.UserInfoDto;
 import com.na.backend.entity.Question;
 import com.na.backend.entity.User;
+import com.na.backend.exception.AlreadyExistsException;
 import com.na.backend.exception.EntityNotFoundException;
 import com.na.backend.exception.UnauthorizedException;
 import com.na.backend.mapper.UserMapper;
@@ -39,7 +40,7 @@ public class UserService {
 
     public Boolean isUser(String id, String token) {
 
-        User user = userRepository.findById(id).orElseThrow(RuntimeException::new);//.orElseThrow(()-> new RuntimeException("invalid id"));
+        User user = userRepository.findById(id).orElseThrow(()-> new UnauthorizedException("invalid id"));
         return token.equals(user.getToken());
     }
 
@@ -116,14 +117,14 @@ public class UserService {
     @Transactional
     public User addFriendById(String myId, String id) {
 
-        User user = userRepository.findById(myId).orElseThrow(RuntimeException::new);
+        User user = userRepository.findById(myId).orElseThrow(()-> new UnauthorizedException("invalid id"));
         List<String> userFriends = user.getFriends();
 
         if(!userFriends.contains(id)) {
             userFriends.add(id);
             return userRepository.save(user);
         } else {
-            throw new RuntimeException();
+            throw new AlreadyExistsException("Already added friend");
         }
 
     }
@@ -162,7 +163,7 @@ public class UserService {
 
     public List<Question> getUserBookmark(String myId) {
 
-        User user = userRepository.findById(myId).orElseThrow(RuntimeException::new);
+        User user = userRepository.findById(myId).orElseThrow(()-> new UnauthorizedException("invalid id"));
 
         List<String> userBookmarkIds = user.getBookmarks();
 
@@ -176,7 +177,7 @@ public class UserService {
     @Transactional
     public User addBookmark(String myId, String questionId) {
 
-        User user = userRepository.findById(myId).orElseThrow(RuntimeException::new);
+        User user = userRepository.findById(myId).orElseThrow(()-> new UnauthorizedException("invalid id"));
 
         List<String> userBookmark = user.getBookmarks();
 
@@ -184,7 +185,7 @@ public class UserService {
             userBookmark.add(questionId);
             return userRepository.save(user);
         } else {
-            throw new RuntimeException();
+            throw new AlreadyExistsException("Already added question");
         }
 
     }
@@ -192,7 +193,7 @@ public class UserService {
     @Transactional
     public User dropBookmark(String myId, String questionId) {
 
-        User user = userRepository.findById(myId).orElseThrow(RuntimeException::new);
+        User user = userRepository.findById(myId).orElseThrow(()-> new UnauthorizedException("invalid id"));
 
         List<String> userBookmark = user.getBookmarks();
 
@@ -201,8 +202,7 @@ public class UserService {
                 return userRepository.save(user);
 
             } else {
-                throw new RuntimeException();
-
+                throw new EntityNotFoundException("unbookmarked question");
             }
     }
 
