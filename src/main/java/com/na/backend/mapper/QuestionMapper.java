@@ -45,6 +45,8 @@ public class QuestionMapper {
                 .receiverId(questionnaire.getReceiverId())
                 .category(questionnaire.getCategory())
                 .createdAt(questionnaire.getCreatedAt())
+                .questions(questionnaire.getQuestions())
+                .answers(questionnaire.getAnswers())
                 .build();
     }
 

@@ -5,6 +5,8 @@ import com.na.backend.dto.OutboxQuestionnaireDto;
 import com.na.backend.dto.QuestionnaireAnswerDto;
 import com.na.backend.dto.QuestionnaireDto;
 import com.na.backend.entity.Questionnaire;
+import com.na.backend.exception.EntityNotFoundException;
+import com.na.backend.exception.InvalidException;
 import com.na.backend.mapper.QuestionMapper;
 import com.na.backend.repository.QuestionnaireRepository;
 import org.springframework.stereotype.Service;
@@ -31,7 +33,7 @@ public class QuestionnaireService {
     @Transactional
     public Questionnaire insertAnswer(String questionnaireId, QuestionnaireAnswerDto questionnaireAnswerDto) {
         Questionnaire questionnaire = questionnaireRepository.findById(questionnaireId)
-                                                             .orElseThrow(RuntimeException::new);
+                                                             .orElseThrow(()-> new InvalidException("invalid questionnaire"));
 
         return questionnaireRepository.save(fillQuestionnaire(questionnaire, questionnaireAnswerDto));
     }
@@ -48,7 +50,7 @@ public class QuestionnaireService {
 
     public QuestionnaireDto getQuestionnaire(String questionnaireId) {
         Questionnaire questionnaire = questionnaireRepository.findById(questionnaireId)
-                                                             .orElseThrow(RuntimeException::new);
+                                                             .orElseThrow(()->new InvalidException("invalid questionnaire"));
         return questionMapper.toQuestionnaireDto(questionnaire);
     }
 

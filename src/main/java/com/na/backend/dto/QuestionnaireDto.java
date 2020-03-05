@@ -15,7 +15,9 @@ import java.util.Map;
 @NoArgsConstructor
 public class QuestionnaireDto {
 
+    private String createUserName;
     private String receiverId;
+    private String receiverName;
     private String category;
     private LocalDateTime createdAt;
     private Map<String, String> questions;

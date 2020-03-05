@@ -40,7 +40,7 @@ public class UserService {
 
     public Boolean isUser(String id, String token) {
 
-        User user = userRepository.findById(id).orElseThrow(()-> new RuntimeException("invalid id"));
+        User user = userRepository.findById(id).orElseThrow(()-> new UnauthorizedException("invalid id"));
         return token.equals(user.getToken());
     }
 
@@ -71,7 +71,8 @@ public class UserService {
         String userEmail = loginDto.getEmail();
         String userPassword = loginDto.getPassword();
 
-        User user = userRepository.findByEmail(userEmail).get();
+        User user = userRepository.findByEmail(userEmail).orElseThrow(()-> new UnauthorizedException("invalid email"));
+
         String userSalt = user.getSalt();
         String encryptPassword = EncryptManager.encryptPlainString(userPassword, userSalt);
 
@@ -84,11 +85,10 @@ public class UserService {
 
     @Transactional
     public User getUserBySocialService(String uid) {
-        Optional<User> user = userRepository.findByUid(uid);
+        User user = userRepository.findByUid(uid).orElseThrow(()-> new UnauthorizedException("invalid uid"));;
 
         if ( isSocialUser(uid) ) {
-
-            return userRepository.findByUid(uid).get();
+            return user;
         } else {
             String salt = EncryptManager.generateSalt();
             String token = EncryptManager.createToken(uid, LocalDateTime.now(), salt);
@@ -117,14 +117,14 @@ public class UserService {
     @Transactional
     public User addFriendById(String myId, String id) {
 
-        User user = userRepository.findById(myId).orElseThrow(RuntimeException::new);
+        User user = userRepository.findById(myId).orElseThrow(()-> new UnauthorizedException("invalid id"));
         List<String> userFriends = user.getFriends();
 
         if(!userFriends.contains(id)) {
             userFriends.add(id);
             return userRepository.save(user);
         } else {
-            throw new RuntimeException();
+            throw new AlreadyExistsException("Already added friend");
         }
 
     }
@@ -163,7 +163,7 @@ public class UserService {
 
     public List<Question> getUserBookmark(String myId) {
 
-        User user = userRepository.findById(myId).get();
+        User user = userRepository.findById(myId).orElseThrow(()-> new UnauthorizedException("invalid id"));
 
         List<String> userBookmarkIds = user.getBookmarks();
 
@@ -177,19 +177,15 @@ public class UserService {
     @Transactional
     public User addBookmark(String myId, String questionId) {
 
-        User user = userRepository.findById(myId).get();
+        User user = userRepository.findById(myId).orElseThrow(()-> new UnauthorizedException("invalid id"));
 
         List<String> userBookmark = user.getBookmarks();
-
-        if(userBookmark.contains(questionId)) {
-            throw new AlreadyExistsException("question("+questionId+")on your list of bookmark!");
-        }
 
         if(!userBookmark.contains(questionId)) {
             userBookmark.add(questionId);
             return userRepository.save(user);
         } else {
-            throw new RuntimeException();
+            throw new AlreadyExistsException("Already added question");
         }
 
     }
@@ -197,7 +193,7 @@ public class UserService {
     @Transactional
     public User dropBookmark(String myId, String questionId) {
 
-        User user = userRepository.findById(myId).orElseThrow(RuntimeException::new);
+        User user = userRepository.findById(myId).orElseThrow(()-> new UnauthorizedException("invalid id"));
 
         List<String> userBookmark = user.getBookmarks();
 
@@ -206,7 +202,7 @@ public class UserService {
                 return userRepository.save(user);
 
             } else {
-                throw new RuntimeException();
+                throw new EntityNotFoundException("unbookmarked question");
 
             }
     }
