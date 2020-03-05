@@ -5,7 +5,6 @@ import com.na.backend.dto.SignUpDto;
 import com.na.backend.dto.UserAuthDto;
 import com.na.backend.dto.UserInfoDto;
 import com.na.backend.entity.Question;
-import com.na.backend.entity.User;
 import com.na.backend.exception.AlreadyExistsException;
 import com.na.backend.exception.EntityNotFoundException;
 import com.na.backend.exception.InvalidException;
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.net.URLEncoder;
 import java.util.List;
 
 
@@ -70,7 +68,7 @@ public class UserController {
     }
 
     @ApiOperation(value = "로그인(이메일)", notes = "입력한 email 유저가 있으면 로그인 / 없으면 에러 ")
-    @GetMapping(value = "/email")
+    @PostMapping(value = "/email/sign_in")
     public ResponseEntity<UserAuthDto> emailLogin(@RequestBody LogInDto loginDto, HttpServletResponse response) {
 
         if (userService.isInvalidEmailPattern(loginDto.getEmail())) {
