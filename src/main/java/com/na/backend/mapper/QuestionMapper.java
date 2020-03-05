@@ -24,9 +24,7 @@ public class QuestionMapper {
     public Questionnaire toQuestionnaire(String createUserId, QuestionnaireDto questionnaireDto) {
         return Questionnaire.builder()
                 .createUserId(createUserId)
-                .createUserName(questionnaireDto.getCreateUserName())
                 .receiverId(questionnaireDto.getReceiverId())
-                .receiverName(questionnaireDto.getReceiverName())
                 .category(questionnaireDto.getCategory())
                 .questions(questionnaireDto.getQuestions())
                 .createdAt(questionnaireDto.getCreatedAt())
@@ -44,9 +42,6 @@ public class QuestionMapper {
 
     public QuestionnaireDto toQuestionnaireDto(Questionnaire questionnaire) {
         return QuestionnaireDto.builder()
-
-                .createUserName(questionnaire.getCreateUserName())
-                .receiverName(questionnaire.getReceiverName())
                 .receiverId(questionnaire.getReceiverId())
                 .category(questionnaire.getCategory())
                 .createdAt(questionnaire.getCreatedAt())
@@ -55,7 +50,6 @@ public class QuestionMapper {
                 .build();
     }
 
-    //받은 질문 sender ->나한테 질문 보낸 사람  =질문 작성자
     public List<InboxQuestionnaireDto> toInboxQuestionnaireDtos(List<Questionnaire> questionnaires) {
         List<InboxQuestionnaireDto> inboxQuestionnaireDtos = new ArrayList<>();
 
@@ -70,7 +64,7 @@ public class QuestionMapper {
 
         return inboxQuestionnaireDtos;
     }
-//보낸 질문
+
     public List<OutboxQuestionnaireDto> toOutboxQuestionnaireDtos(List<Questionnaire> questionnaires) {
         List<OutboxQuestionnaireDto> outboxQuestionnaireDtos = new ArrayList<>();
 

@@ -24,15 +24,11 @@ public class QuestionnaireDto {
     private Map<String, String> answers;
 
     @Builder
-    public QuestionnaireDto(String createUserName,
-                            String receiverId,
-                            String receiverName,
+    public QuestionnaireDto(String receiverId,
                             String category,
                             LocalDateTime createdAt,
                             Map<String, String> questions,
                             Map<String, String> answers) {
-        this.createUserName = createUserName;
-        this.receiverName = receiverName;
         this.receiverId = receiverId;
         this.category = category;
         this.createdAt = createdAt;
