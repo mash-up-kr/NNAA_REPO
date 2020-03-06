@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 
-@Api(value="user 인증 API")
+@Api(value = "user 인증 API")
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -34,7 +34,7 @@ public class UserController {
     private QuestionService questionService;
 
     public UserController(UserService userService,
-                          QuestionService questionService){
+                          QuestionService questionService) {
         this.userService = userService;
         this.questionService = questionService;
     }
@@ -46,11 +46,11 @@ public class UserController {
         String name = signUpDto.getName();
 
         if (userService.isInvalidNamePattern(name)) {
-            throw new InvalidStringException("유효하지 않은 이름 형식입니다("+name+")");
+            throw new InvalidStringException("유효하지 않은 이름 형식입니다(" + name + ")");
         }
 
         if (userService.isInvalidEmailPattern(email)) {
-            throw new InvalidStringException("유효하지 않은 이메일 형식입니다("+email+")");
+            throw new InvalidStringException("유효하지 않은 이메일 형식입니다(" + email + ")");
         }
 
         if (userService.isEmailUser(email)) {
@@ -97,7 +97,7 @@ public class UserController {
 
     @ApiOperation(value = "이름으로 유저찾기", notes = "이름으로 다른 유저 찾기")
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "name", value = "검색할 이름", paramType = "query", required = true)
+            @ApiImplicitParam(name = "name", value = "검색할 이름", paramType = "query", required = true)
     })
     @GetMapping
     public ResponseEntity<List<UserInfoDto>> searchUserByName(@RequestParam String name) {
@@ -115,17 +115,17 @@ public class UserController {
 
     @ApiOperation(value = "즐겨찾기 등록", notes = "질문 즐겨찾기 등록하기 ")
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "questionId", value = "문제 번호", paramType = "path", required = true)
+            @ApiImplicitParam(name = "questionId", value = "문제 번호", paramType = "path", required = true)
     })
     @PatchMapping("/bookmark/{questionId}")
     public ResponseEntity<Void> addBookmark(@PathVariable String questionId, HttpServletRequest request) {
         String myId = request.getHeader(HEADER_ID);
 
-        if(questionService.isInvalidQuestionId(questionId)) {
-            throw new InvalidException("Question id("+questionId+") is invalid");
+        if (questionService.isInvalidQuestionId(questionId)) {
+            throw new InvalidException("Question id(" + questionId + ") is invalid");
         }
 
-        userService.addBookmark(myId,questionId);
+        userService.addBookmark(myId, questionId);
 
         return ResponseEntity.status(HttpStatus.OK).build();
     }
@@ -135,9 +135,9 @@ public class UserController {
             @ApiImplicitParam(name = "questionId", value = "문제 번호", paramType = "path", required = true)
     })
     @DeleteMapping("/bookmark/{questionId}")
-    public ResponseEntity<Void> removeHeart(@PathVariable String questionId, HttpServletRequest request){
+    public ResponseEntity<Void> removeHeart(@PathVariable String questionId, HttpServletRequest request) {
         String myId = request.getHeader(HEADER_ID);
-        userService.dropBookmark(myId,questionId);
+        userService.dropBookmark(myId, questionId);
 
         return ResponseEntity.status(HttpStatus.OK).build();
     }

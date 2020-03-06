@@ -4,7 +4,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
-
 import java.util.Map;
 
 @Setter
@@ -19,7 +18,10 @@ public class Question {
     private Map<String, String> choices;
 
     @Builder
-    public Question(String content, String category, String type, Map<String, String> choices){
+    public Question(String content,
+                    String category,
+                    String type,
+                    Map<String, String> choices){
         this.content = content;
         this.category = category;
         this.type = type;

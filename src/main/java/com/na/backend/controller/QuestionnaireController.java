@@ -1,6 +1,9 @@
 package com.na.backend.controller;
 
-import com.na.backend.dto.*;
+import com.na.backend.dto.AnswerQuestionnaireDto;
+import com.na.backend.dto.InboxQuestionnaireDto;
+import com.na.backend.dto.NewQuestionnaireDto;
+import com.na.backend.dto.OutboxQuestionnaireDto;
 import com.na.backend.entity.Questionnaire;
 import com.na.backend.service.QuestionnaireService;
 import io.swagger.annotations.Api;
@@ -9,13 +12,12 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-@Api(value="질문지 API")
+@Api(value = "질문지 API")
 @RestController
 @RequestMapping("/questionnaire")
 public class QuestionnaireController {
@@ -39,9 +41,9 @@ public class QuestionnaireController {
             @ApiImplicitParam(name = "questionnaireId", value = "질문지 번호", paramType = "path", required = true)
     })
     @PatchMapping("/{questionnaireId}")
-    public ResponseEntity<Questionnaire> answerQuestionnaire(@PathVariable String questionnaireId ,
-                                                             @RequestBody AnswerQuestionnaireDto questionnaireAnswerDto) {
-        return ResponseEntity.status(HttpStatus.OK).body(questionnaireService.insertAnswer(questionnaireId, questionnaireAnswerDto));
+    public ResponseEntity<Questionnaire> answerQuestionnaire(@PathVariable String questionnaireId,
+                                                             @RequestBody AnswerQuestionnaireDto answerQuestionnaireDto) {
+        return ResponseEntity.status(HttpStatus.OK).body(questionnaireService.insertAnswer(questionnaireId, answerQuestionnaireDto));
     }
 
     @ApiOperation(value = "질문지 보기", notes = "질문지 하나만 보기! / 답변 보기 / 보관함에서 보기")

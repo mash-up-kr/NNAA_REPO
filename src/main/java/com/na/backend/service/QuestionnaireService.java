@@ -1,20 +1,22 @@
 package com.na.backend.service;
 
+import com.na.backend.dto.AnswerQuestionnaireDto;
 import com.na.backend.dto.InboxQuestionnaireDto;
+import com.na.backend.dto.NewQuestionnaireDto;
 import com.na.backend.dto.OutboxQuestionnaireDto;
-import com.na.backend.dto.QuestionnaireAnswerDto;
-import com.na.backend.dto.QuestionnaireDto;
 import com.na.backend.entity.Questionnaire;
 import com.na.backend.entity.User;
 import com.na.backend.exception.EntityNotFoundException;
-import com.na.backend.exception.InvalidException;
 import com.na.backend.mapper.QuestionMapper;
 import com.na.backend.repository.QuestionnaireRepository;
 import com.na.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class QuestionnaireService {
@@ -32,18 +34,22 @@ public class QuestionnaireService {
     }
 
     public Questionnaire createQuestionnaire(String createUserId, NewQuestionnaireDto newQuestionnaireDto) {
-        User createUser = userRepository.findById(createUserId).get();
-        User receiver = userRepository.findById(newQuestionnaireDto.getReceiverId()).get();
+        User createUser = userRepository.findById(createUserId)
+                .orElseThrow(() -> new EntityNotFoundException("no user for create user id (" + createUserId + ")"));
+
+        String receiverId = newQuestionnaireDto.getReceiverId();
+        User receiver = userRepository.findById(receiverId)
+                .orElseThrow(() -> new EntityNotFoundException("no user for receiver id (" + receiverId + ")"));
 
         return questionnaireRepository.insert(questionMapper.toQuestionnaireWhenNew(createUser, receiver, newQuestionnaireDto));
     }
 
     @Transactional
-    public Questionnaire insertAnswer(String questionnaireId, AnswerQuestionnaireDto questionnaireAnswerDto) {
+    public Questionnaire insertAnswer(String questionnaireId, AnswerQuestionnaireDto answerQuestionnaireDto) {
         Questionnaire questionnaire = questionnaireRepository.findById(questionnaireId)
-                                                             .orElseThrow(()-> new InvalidException("invalid questionnaire"));
+                .orElseThrow(() -> new EntityNotFoundException("no questionnaire for id (" + questionnaireId + ")"));
 
-        return questionnaireRepository.save(fillQuestionnaire(questionnaire, questionnaireAnswerDto));
+        return questionnaireRepository.save(fillQuestionnaire(questionnaire, answerQuestionnaireDto));
     }
 
     public List<OutboxQuestionnaireDto> getOutboxQuestionnaires(String myId) {
@@ -57,22 +63,15 @@ public class QuestionnaireService {
     }
 
     public Questionnaire getQuestionnaire(String questionnaireId) {
-        Questionnaire questionnaire = questionnaireRepository.findById(questionnaireId)
-                .orElseThrow(RuntimeException::new);
-        return questionnaire;
-    }
 
-
-    public QuestionnaireDto getQuestionnaire(String questionnaireId) {
-        Questionnaire questionnaire = questionnaireRepository.findById(questionnaireId)
-                                                             .orElseThrow(()->new InvalidException("invalid questionnaire"));
-        return questionMapper.toQuestionnaireDto(questionnaire);
+        return questionnaireRepository.findById(questionnaireId)
+                .orElseThrow(() -> new EntityNotFoundException("no questionnaire for id (" + questionnaireId + ")"));
     }
 
     private Integer countValidAnswer(List<String> answers) {
         int count = 0;
-        for(String answer : answers) {
-            if( answer != null && !answer.trim().equals("") ) count += 1;
+        for (String answer : answers) {
+            if (answer != null && !answer.trim().equals("")) count += 1;
         }
         return count;
     }
@@ -85,8 +84,8 @@ public class QuestionnaireService {
         LocalDateTime updatedAt = questionnaireAnswerDto.getUpdatedAt();
 
         // TODO: 응답이 빈 질문이 있나 체크
-        Integer questionCount = questionnaire.getQuestions().size();
-        Integer validAnswerCount = countValidAnswer(answerValues);
+        int questionCount = questionnaire.getQuestions().size();
+        int validAnswerCount = countValidAnswer(answerValues);
 
         questionnaire.setAnswers(answers);
         questionnaire.setUpdatedAt(updatedAt);

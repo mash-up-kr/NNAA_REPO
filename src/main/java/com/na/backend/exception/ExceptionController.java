@@ -5,13 +5,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import javax.servlet.http.HttpServletRequest;
-
 @RestControllerAdvice
 public class ExceptionController {
 
     @ExceptionHandler(value = BaseException.class)
-    public ResponseEntity<String> restExceptionHandler(HttpServletRequest req, BaseException exception)
+    public ResponseEntity<String> restExceptionHandler(BaseException exception)
             throws RuntimeException {
         ApiError apiError = exception.getApiError();
 

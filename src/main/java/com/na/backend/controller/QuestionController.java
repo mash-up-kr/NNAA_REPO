@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Api(value="질문 API")
+@Api(value = "질문 API")
 @Controller
 @RequestMapping("/question")
 public class QuestionController {
@@ -27,18 +27,18 @@ public class QuestionController {
         this.questionService = questionService;
     }
 
-    @ApiOperation(value = "직접 질문 입력해서 질문 추가하기", notes = "")
+    @ApiOperation(value = "직접 질문 입력해서 질문 추가하기")
     @PostMapping
-    public ResponseEntity<Question> insertQuestion(@RequestBody NewQuestionDto newQuestionDto){
+    public ResponseEntity<Question> insertQuestion(@RequestBody NewQuestionDto newQuestionDto) {
         String category = newQuestionDto.getCategory();
         String type = newQuestionDto.getType();
 
-        if(questionService.isInvalidCategory(category)) {
-            throw new InvalidCategoryException("Invalid category("+category+")!");
+        if (questionService.isInvalidCategory(category)) {
+            throw new InvalidCategoryException("Invalid category(" + category + ")!");
         }
 
-        if(questionService.isInvalidType(type)) {
-            throw new InvalidTypeException("Invalid type("+type+")!");
+        if (questionService.isInvalidType(type)) {
+            throw new InvalidTypeException("Invalid type(" + type + ")!");
         }
 
         Question newQuestion = questionService.insertNewQuestion(newQuestionDto);
@@ -66,8 +66,8 @@ public class QuestionController {
     })
     @GetMapping("/random")
     public ResponseEntity<List<Question>> getRandomQuestions(@RequestParam String category, @RequestParam(defaultValue = "30") Integer size) {
-        if(questionService.isInvalidCategory(category)) {
-            throw new InvalidCategoryException("Invalid category("+category+")!");
+        if (questionService.isInvalidCategory(category)) {
+            throw new InvalidCategoryException("Invalid category(" + category + ")!");
         }
 
         List<Question> randomQuestions = questionService.getRandomQuestions(category, size);

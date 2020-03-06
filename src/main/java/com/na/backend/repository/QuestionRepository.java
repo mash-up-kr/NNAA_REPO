@@ -14,8 +14,11 @@ public interface QuestionRepository extends MongoRepository<Question, String> {
     List<Question> getQuestionIdsByCategory(String category);
 
     List<Question> findByCategoryAndType(String category, String type);
+
     List<Question> findByCategory(String category);
+
     List<Question> findByType(String type);
+
     List<Question> findQuestionsByIdIn(List<String> ids);
-    
+
 }

@@ -1,13 +1,9 @@
 package com.na.backend.dto;
 
-
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.time.LocalDateTime;
-import java.util.Map;
 
 @Getter
 @Setter
@@ -20,7 +16,10 @@ public class InboxQuestionnaireDto {
     private Integer questionsCount;
 
     @Builder
-    public InboxQuestionnaireDto(String senderId, String senderName, String category, Integer questionsCount) {
+    public InboxQuestionnaireDto(String senderId,
+                                 String senderName,
+                                 String category,
+                                 Integer questionsCount) {
         this.senderId = senderId;
         this.senderName = senderName;
         this.category = category;

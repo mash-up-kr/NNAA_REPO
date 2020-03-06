@@ -2,7 +2,6 @@ package com.na.backend.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
@@ -26,7 +25,7 @@ public class SwaggerConfig {
 
     @SuppressWarnings("deprecation")
     private ApiInfo apiInfo() {
-        ApiInfo apiInfo = new ApiInfo(
+        return new ApiInfo(
                 "너나알아 Api",
                 "참고 : 문제지",
                 "1.0",
@@ -35,7 +34,6 @@ public class SwaggerConfig {
                 "License",
                 "License URL"
         );
-        return apiInfo;
     }
 
 }
