@@ -24,8 +24,8 @@ public class EncryptManager {
             messageDigest.update(salt.getBytes());
             byte[] digest = messageDigest.digest(plainString.getBytes());
             encryptString = Hex.encodeHexString(digest);
-        } catch(NoSuchAlgorithmException e) {
-            System.out.println("문자열 암호화 오류 : "+ e.getMessage());
+        } catch (NoSuchAlgorithmException e) {
+            System.out.println("문자열 암호화 오류 : " + e.getMessage());
         }
 
         return encryptString;

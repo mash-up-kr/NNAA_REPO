@@ -15,5 +15,7 @@ public enum Category {
         this.value = value;
     }
 
-    public String value() { return value; }
+    public String value() {
+        return value;
+    }
 }

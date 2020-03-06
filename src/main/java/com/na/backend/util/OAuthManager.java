@@ -14,71 +14,71 @@ import java.net.URL;
 public class OAuthManager {
 
     public static String getUid(String provider, String accessToken) {
-        String userId="";
+        String userId = "";
 
-        switch(provider) {
+        switch (provider) {
             case "kakao":
                 String meURL = "https://kapi.kakao.com/v2/user/me";
-                try{
+                try {
                     URL url = new URL(meURL);
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                     conn.setRequestMethod("GET");
-                    conn.setRequestProperty("Authorization", "Bearer "+accessToken);
-                    conn.setRequestProperty("Content-type","application/x-www-form-urlencoded;charset=utf-8");
+                    conn.setRequestProperty("Authorization", "Bearer " + accessToken);
+                    conn.setRequestProperty("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
                     int responseCode = conn.getResponseCode();
-                    System.out.println("Response Code : "+responseCode);
+                    System.out.println("Response Code : " + responseCode);
 
                     BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 
-                    String line = "";
-                    String result = "";
+                    String line;
+                    StringBuilder result = new StringBuilder();
 
-                    while((line = br.readLine()) != null) {
-                        result += line;
+                    while ((line = br.readLine()) != null) {
+                        result.append(line);
                     }
 
                     JsonParser parser = new JsonParser();
-                    JsonElement element = parser.parse(result);
+                    JsonElement element = parser.parse(result.toString());
 
                     userId = element.getAsJsonObject().get("id").toString();
-                }catch (IOException e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             case "facebook":
                 String debugURL = "https://graph.facebook.com/debug_token";
                 String myAccessToken = "879784569086450|ZuBrf7jBbgTPEwecRuCbSMnAm5w";
-                try{
-                    debugURL += "?input_token="+accessToken;
-                    debugURL += "&access_token="+myAccessToken;
+                try {
+                    debugURL += "?input_token=" + accessToken;
+                    debugURL += "&access_token=" + myAccessToken;
                     URL url = new URL(debugURL);
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                     conn.setRequestMethod("GET");
 
                     int responseCode = conn.getResponseCode();
-                    System.out.println("Response Code : "+responseCode);
+                    System.out.println("Response Code : " + responseCode);
 
                     BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 
-                    String line = "";
-                    String result = "";
+                    String line;
+                    StringBuilder result = new StringBuilder();
 
-                    while((line = br.readLine()) != null) {
-                        result += line;
+                    while ((line = br.readLine()) != null) {
+                        result.append(line);
                     }
 
                     JsonParser parser = new JsonParser();
-                    JsonElement element = parser.parse(result);
+                    JsonElement element = parser.parse(result.toString());
 
                     JsonObject data = element.getAsJsonObject().get("data").getAsJsonObject();
                     System.out.println(data);
                     userId = data.getAsJsonObject().get("user_id").toString();
-                }catch (IOException e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
                 break;
             default:
-                throw new InvalidProviderException("The provider("+provider+") is not supported!");
+                throw new InvalidProviderException("The provider(" + provider + ") is not supported!");
         }
 
         return userId;

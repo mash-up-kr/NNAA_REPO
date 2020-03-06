@@ -4,7 +4,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
-
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -27,7 +26,18 @@ public class Questionnaire {
     private Map<String,String> answers;
 
     @Builder
-    public Questionnaire(String id, String createUserId,String createUserName, String receiverId, String receiverName, String category, Boolean completeFlag, LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime answeredAt, Map<String, String> questions, Map<String, String> answers) {
+    public Questionnaire(String id,
+                         String createUserId,
+                         String createUserName,
+                         String receiverId,
+                         String receiverName,
+                         String category,
+                         Boolean completeFlag,
+                         LocalDateTime createdAt,
+                         LocalDateTime updatedAt,
+                         LocalDateTime answeredAt,
+                         Map<String, String> questions,
+                         Map<String, String> answers) {
         this.id = id;
         this.createUserId = createUserId;
         this.createUserName = createUserName;
@@ -41,6 +51,4 @@ public class Questionnaire {
         this.questions = questions;
         this.answers = answers;
     }
-
-
 }

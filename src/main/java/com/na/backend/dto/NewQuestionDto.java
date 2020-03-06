@@ -25,7 +25,7 @@ public class NewQuestionDto {
     private Map<String, String> choices;
 
     @Builder
-    public NewQuestionDto(String type, String content, String category, Map<String, String> choices){
+    public NewQuestionDto(String type, String content, String category, Map<String, String> choices) {
         this.type = type;
         this.category = category;
         this.content = content;
