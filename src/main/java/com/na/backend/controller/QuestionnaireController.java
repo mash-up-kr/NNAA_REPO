@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Api(value="질문지 API")
-@Controller
+@RestController
 @RequestMapping("/questionnaire")
 public class QuestionnaireController {
 

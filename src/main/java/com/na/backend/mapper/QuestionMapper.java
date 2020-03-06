@@ -43,6 +43,16 @@ public class QuestionMapper {
                 .build();
     }
 
+    public QuestionnaireDto toQuestionnaireDto(Questionnaire questionnaire) {
+        return QuestionnaireDto.builder()
+                .receiverId(questionnaire.getReceiverId())
+                .category(questionnaire.getCategory())
+                .createdAt(questionnaire.getCreatedAt())
+                .questions(questionnaire.getQuestions())
+                .answers(questionnaire.getAnswers())
+                .build();
+    }
+
     public List<InboxQuestionnaireDto> toInboxQuestionnaireDtos(List<Questionnaire> questionnaires) {
         List<InboxQuestionnaireDto> inboxQuestionnaireDtos = new ArrayList<>();
 
