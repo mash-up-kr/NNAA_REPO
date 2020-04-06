@@ -62,7 +62,7 @@ public class QuestionController {
     @ApiOperation(value = "문제지 첫 기본세팅", notes = "카테고리(나와 상대방의 관계) 선택 후 질문지의 기본 세팅을 위해 랜덤으로 질문 30개를 가져옵니다")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "category", value = "문제 카테고리", paramType = "query"),
-            @ApiImplicitParam(name = "number", value = "문제 개수", paramType = "query")
+            @ApiImplicitParam(name = "size", value = "문제 개수", paramType = "query")
     })
     @GetMapping("/random")
     public ResponseEntity<List<Question>> getRandomQuestions(@RequestParam String category, @RequestParam(defaultValue = "30") Integer size) {
