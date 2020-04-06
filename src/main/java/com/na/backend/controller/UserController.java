@@ -89,6 +89,24 @@ public class UserController {
         }
     }
 
+    @ApiOperation(value = "비밀번호 재설정 이메일 보내기", notes = "비밀번호 재설정할 링크를 받을 이메일을 넘겨준다")
+    @GetMapping(value = "/password")
+    public ResponseEntity<Void> sendResetPasswordEmail(@RequestParam String email) {
+        if (userService.isEmailUser(email)) {
+            userService.sendResetPasswordEmail(email);
+            return ResponseEntity.status(HttpStatus.OK).build();
+        } else {
+            String message = "해당 이메일(" + email + ")을 가진 유저가 없습니다.";
+            throw new EntityNotFoundException(message);
+        }
+    }
+
+    @ApiOperation(value = "로그인한 사용자 비밀번호 재설정하기", notes = "현재 로그인되어있는 사용자의 id를 path 에 넣어 보낸다")
+    @PatchMapping(value = "{userId}/change_password")
+    public ResponseEntity<String> resetPasswordForLoginUser(@PathVariable String userId, @RequestParam String newPassword, @RequestParam String newPasswordAgain) {
+        return ResponseEntity.status(HttpStatus.OK).body("소셜로그인 아직 제공하지 않음");
+    }
+
     @ApiOperation(value = "로그인(카카오/페이스북)", notes = "추후 제작")
     @GetMapping(value = "/social")
     public ResponseEntity<String> socialLogin(@RequestParam String provider, @RequestParam String token) {

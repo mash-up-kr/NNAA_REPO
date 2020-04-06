@@ -13,6 +13,8 @@ import com.na.backend.mapper.UserMapper;
 import com.na.backend.repository.QuestionRepository;
 import com.na.backend.repository.UserRepository;
 import com.na.backend.util.EncryptManager;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,13 +29,16 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final QuestionRepository questionRepository;
+    private final JavaMailSender mailSender;
 
     public UserService(UserRepository userRepository,
                        UserMapper userMapper,
-                       QuestionRepository questionRepository) {
+                       QuestionRepository questionRepository,
+                       JavaMailSender javaMailSender) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.questionRepository = questionRepository;
+        this.mailSender = javaMailSender;
     }
 
     public Boolean isUser(String id, String token) {
@@ -125,7 +130,20 @@ public class UserService {
         } else {
             throw new AlreadyExistsException("Already added friend");
         }
+    }
 
+    @Transactional
+    public void sendResetPasswordEmail(String email) {
+        User user = userRepository.findByEmail(email).get();
+        //String timeLimit = LocalDateTime.now().toString(); // 유효시간 몇분으로 설정할지..?
+        //String resetLink = "" + userId + timeLimit;
+
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(email);
+        mailMessage.setSubject("비밀번호 변경 확인 메일");
+        mailMessage.setText(user.getId() + " 님 비밀번호를 변경하시겠습니까?");
+
+        mailSender.send(mailMessage);
     }
 
     public boolean isInvalidNamePattern(String name) {
