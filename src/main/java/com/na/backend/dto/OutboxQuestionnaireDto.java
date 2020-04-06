@@ -1,6 +1,5 @@
 package com.na.backend.dto;
 
-
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -10,7 +10,8 @@ public class WebConfig implements WebMvcConfigurer {
     private static final String[] EXCLUDE_PATHS = {
             "/*",
             "/user/email",
-            "/user/social"
+            "/user/social",
+            "/user/password"
     };
 
     private static final String[] ADD_PATHS = {

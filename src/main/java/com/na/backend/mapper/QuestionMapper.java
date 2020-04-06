@@ -21,32 +21,16 @@ public class QuestionMapper {
                 .build();
     }
 
-    public Questionnaire toQuestionnaire(String createUserId, QuestionnaireDto questionnaireDto) {
+    public Questionnaire toQuestionnaireWhenNew(User createUser, User receiver, NewQuestionnaireDto newQuestionnaireDto) {
         return Questionnaire.builder()
-                .createUserId(createUserId)
-                .receiverId(questionnaireDto.getReceiverId())
-                .category(questionnaireDto.getCategory())
-                .questions(questionnaireDto.getQuestions())
-                .createdAt(questionnaireDto.getCreatedAt())
-                .build();
-    }
-
-    public QuestionDto toQuestionDto(Question question) {
-        return QuestionDto.builder()
-                .type(question.getType())
-                .category(question.getCategory())
-                .content(question.getContent())
-                .choices(question.getChoices())
-                .build();
-    }
-
-    public QuestionnaireDto toQuestionnaireDto(Questionnaire questionnaire) {
-        return QuestionnaireDto.builder()
-                .receiverId(questionnaire.getReceiverId())
-                .category(questionnaire.getCategory())
-                .createdAt(questionnaire.getCreatedAt())
-                .questions(questionnaire.getQuestions())
-                .answers(questionnaire.getAnswers())
+                .createUserId(createUser.getId())
+                .createUserName(createUser.getName())
+                .receiverId(receiver.getId())
+                .receiverName(receiver.getName())
+                .completeFlag(Boolean.FALSE)
+                .category(newQuestionnaireDto.getCategory())
+                .questions(newQuestionnaireDto.getQuestions())
+                .createdAt(newQuestionnaireDto.getCreatedAt())
                 .build();
     }
 
@@ -54,12 +38,12 @@ public class QuestionMapper {
         List<InboxQuestionnaireDto> inboxQuestionnaireDtos = new ArrayList<>();
 
         questionnaires.forEach(questionnaire ->
-            inboxQuestionnaireDtos.add(InboxQuestionnaireDto.builder()
-                                    .senderId(questionnaire.getCreateUserId())
-                                    .senderName(questionnaire.getCreateUserName())
-                                    .category(questionnaire.getCategory())
-                                    .questionsCount(questionnaire.getQuestions().size())
-                                    .build())
+                inboxQuestionnaireDtos.add(InboxQuestionnaireDto.builder()
+                        .senderId(questionnaire.getCreateUserId())
+                        .senderName(questionnaire.getCreateUserName())
+                        .category(questionnaire.getCategory())
+                        .questionsCount(questionnaire.getQuestions().size())
+                        .build())
         );
 
         return inboxQuestionnaireDtos;

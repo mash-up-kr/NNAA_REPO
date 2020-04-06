@@ -9,5 +9,6 @@ import java.util.List;
 @Repository
 public interface QuestionnaireRepository extends MongoRepository<Questionnaire, String> {
     List<Questionnaire> findByCreateUserId(String createUserId);
+
     List<Questionnaire> findByReceiverId(String receiverId);
 }

@@ -16,7 +16,7 @@ public class LogInDto {
     private String password;
 
     @Builder
-    public LogInDto(String email, String password){
+    public LogInDto(String email, String password) {
         this.email = email;
         this.password = password;
     }

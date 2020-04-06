@@ -17,7 +17,7 @@
 - Spring boot 2.2.1
 - Gradle
 - Spring Data Mongodb
-- MongoDB # 버전
+- MongoDB
 - AWS EC2
 - Travis
 

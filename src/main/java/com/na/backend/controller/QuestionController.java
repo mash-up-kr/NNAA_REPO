@@ -4,7 +4,6 @@ import com.na.backend.dto.*;
 import com.na.backend.entity.Question;
 import com.na.backend.exception.InvalidCategoryException;
 import com.na.backend.exception.InvalidTypeException;
-import com.na.backend.service.Category;
 import com.na.backend.service.QuestionService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -17,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Api(value="질문 API")
+@Api(value = "질문 API")
 @Controller
 @RequestMapping("/question")
 public class QuestionController {
@@ -28,18 +27,18 @@ public class QuestionController {
         this.questionService = questionService;
     }
 
-    @ApiOperation(value = "직접 질문 입력해서 질문 추가하기", notes = "")
+    @ApiOperation(value = "직접 질문 입력해서 질문 추가하기")
     @PostMapping
-    public ResponseEntity<Question> insertQuestion(@RequestBody NewQuestionDto newQuestionDto){
+    public ResponseEntity<Question> insertQuestion(@RequestBody NewQuestionDto newQuestionDto) {
         String category = newQuestionDto.getCategory();
         String type = newQuestionDto.getType();
 
-        if(questionService.isInvalidCategory(category)) {
-            throw new InvalidCategoryException("Invalid category("+category+")!");
+        if (questionService.isInvalidCategory(category)) {
+            throw new InvalidCategoryException("Invalid category(" + category + ")!");
         }
 
-        if(questionService.isInvalidType(type)) {
-            throw new InvalidTypeException("Invalid type("+type+")!");
+        if (questionService.isInvalidType(type)) {
+            throw new InvalidTypeException("Invalid type(" + type + ")!");
         }
 
         Question newQuestion = questionService.insertNewQuestion(newQuestionDto);
@@ -63,12 +62,12 @@ public class QuestionController {
     @ApiOperation(value = "문제지 첫 기본세팅", notes = "카테고리(나와 상대방의 관계) 선택 후 질문지의 기본 세팅을 위해 랜덤으로 질문 30개를 가져옵니다")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "category", value = "문제 카테고리", paramType = "query"),
-            @ApiImplicitParam(name = "number", value = "문제 개수", paramType = "query")
+            @ApiImplicitParam(name = "size", value = "문제 개수", paramType = "query")
     })
     @GetMapping("/random")
     public ResponseEntity<List<Question>> getRandomQuestions(@RequestParam String category, @RequestParam(defaultValue = "30") Integer size) {
-        if(questionService.isInvalidCategory(category)) {
-            throw new InvalidCategoryException("Invalid category("+category+")!");
+        if (questionService.isInvalidCategory(category)) {
+            throw new InvalidCategoryException("Invalid category(" + category + ")!");
         }
 
         List<Question> randomQuestions = questionService.getRandomQuestions(category, size);

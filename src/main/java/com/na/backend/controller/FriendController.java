@@ -1,6 +1,5 @@
 package com.na.backend.controller;
 
-import com.na.backend.entity.User;
 import com.na.backend.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -11,11 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
-
-@Api(value="friend API")
+@Api(value = "friend API")
 @RestController
 @RequestMapping("/friend")
 public class FriendController {
@@ -23,7 +19,7 @@ public class FriendController {
     private static final String HEADER_ID = "id";
     private final UserService userService;
 
-    public FriendController(UserService userService){
+    public FriendController(UserService userService) {
         this.userService = userService;
     }
 
@@ -39,7 +35,7 @@ public class FriendController {
 
     @ApiOperation(value = "친구 등록하기", notes = "id로 내 친구 등록")
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "id", value = "등록할 친구 아이디", paramType = "path", required = true)
+            @ApiImplicitParam(name = "id", value = "등록할 친구 아이디", paramType = "path", required = true)
     })
     @PatchMapping(value = "/{id}")
     public ResponseEntity<Void> addFriend(@PathVariable String id, HttpServletRequest request) {

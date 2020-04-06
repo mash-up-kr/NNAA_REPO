@@ -2,9 +2,7 @@ package com.na.backend.interceptor;
 
 import com.na.backend.exception.UnauthorizedException;
 import com.na.backend.service.UserService;
-import jdk.nashorn.internal.parser.Token;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,20 +21,23 @@ public class TokenInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+    public boolean preHandle(HttpServletRequest request,
+                             HttpServletResponse response,
+                             Object handler) {
+
         final String id = request.getHeader(HEADER_ID);
         final String token = request.getHeader(HEADER_TOKEN);
 
-        if(id == null) {
+        if (id == null) {
             throw new UnauthorizedException("no id");
         }
-        if(token == null) {
+        if (token == null) {
             throw new UnauthorizedException("no token");
         }
 
-        if(userService.isUser(id, token)){
+        if (userService.isUser(id, token)) {
             return true;
-        }else{
+        } else {
             throw new UnauthorizedException("invalid token");
         }
     }

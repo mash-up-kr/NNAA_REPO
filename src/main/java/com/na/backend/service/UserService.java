@@ -13,14 +13,14 @@ import com.na.backend.mapper.UserMapper;
 import com.na.backend.repository.QuestionRepository;
 import com.na.backend.repository.UserRepository;
 import com.na.backend.util.EncryptManager;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.constraints.Null;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.regex.Pattern;
 
 @Service
@@ -29,18 +29,21 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final QuestionRepository questionRepository;
+    private final JavaMailSender mailSender;
 
     public UserService(UserRepository userRepository,
                        UserMapper userMapper,
-                       QuestionRepository questionRepository) {
+                       QuestionRepository questionRepository,
+                       JavaMailSender javaMailSender) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.questionRepository = questionRepository;
+        this.mailSender = javaMailSender;
     }
 
     public Boolean isUser(String id, String token) {
 
-        User user = userRepository.findById(id).orElseThrow(()-> new UnauthorizedException("invalid id"));
+        User user = userRepository.findById(id).orElseThrow(() -> new UnauthorizedException("invalid id"));
         return token.equals(user.getToken());
     }
 
@@ -55,13 +58,13 @@ public class UserService {
         String token = EncryptManager.createToken(userEmail, LocalDateTime.now(), salt);
 
         User newUser = User.builder()
-                           .email(userEmail)
-                           .name(userName)
-                           .password(encryptPassword)
-                           .salt(salt)
-                           .bookmarks(new ArrayList<>())
-                           .token(token)
-                           .build();
+                .email(userEmail)
+                .name(userName)
+                .password(encryptPassword)
+                .salt(salt)
+                .bookmarks(new ArrayList<>())
+                .token(token)
+                .build();
 
         return userMapper.toUserAuthDto(userRepository.insert(newUser));
     }
@@ -71,7 +74,7 @@ public class UserService {
         String userEmail = loginDto.getEmail();
         String userPassword = loginDto.getPassword();
 
-        User user = userRepository.findByEmail(userEmail).orElseThrow(()-> new UnauthorizedException("invalid email"));
+        User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new UnauthorizedException("invalid email"));
 
         String userSalt = user.getSalt();
         String encryptPassword = EncryptManager.encryptPlainString(userPassword, userSalt);
@@ -85,20 +88,21 @@ public class UserService {
 
     @Transactional
     public User getUserBySocialService(String uid) {
-        User user = userRepository.findByUid(uid).orElseThrow(()-> new UnauthorizedException("invalid uid"));;
+        User user = userRepository.findByUid(uid)
+                .orElseThrow(() -> new UnauthorizedException("invalid uid"));
 
-        if ( isSocialUser(uid) ) {
+        if (isSocialUser(uid)) {
             return user;
         } else {
             String salt = EncryptManager.generateSalt();
             String token = EncryptManager.createToken(uid, LocalDateTime.now(), salt);
 
             User newUser = User.builder()
-                               .uid(uid)
-                               .name("")
-                               .salt(salt)
-                               .bookmarks(new ArrayList<>())
-                               .token(token).build();
+                    .uid(uid)
+                    .name("")
+                    .salt(salt)
+                    .bookmarks(new ArrayList<>())
+                    .token(token).build();
 
             return userRepository.insert(newUser);
         }
@@ -108,7 +112,7 @@ public class UserService {
         List<User> users = userRepository.findUsersByName(name);
 
         if (users.size() == 0) {
-            throw new EntityNotFoundException("no user for name("+name+")");
+            throw new EntityNotFoundException("no user for name(" + name + ")");
         }
 
         return userMapper.toUserInfoDtos(users);
@@ -117,38 +121,43 @@ public class UserService {
     @Transactional
     public User addFriendById(String myId, String id) {
 
-        User user = userRepository.findById(myId).orElseThrow(()-> new UnauthorizedException("invalid id"));
+        User user = userRepository.findById(myId).orElseThrow(() -> new UnauthorizedException("invalid id"));
         List<String> userFriends = user.getFriends();
 
-        if(!userFriends.contains(id)) {
+        if (!userFriends.contains(id)) {
             userFriends.add(id);
             return userRepository.save(user);
         } else {
             throw new AlreadyExistsException("Already added friend");
         }
+    }
 
+    @Transactional
+    public void sendResetPasswordEmail(String email) {
+        User user = userRepository.findByEmail(email).get();
+        //String timeLimit = LocalDateTime.now().toString(); // 유효시간 몇분으로 설정할지..?
+        //String resetLink = "" + userId + timeLimit;
+
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(email);
+        mailMessage.setSubject("비밀번호 변경 확인 메일");
+        mailMessage.setText(user.getId() + " 님 비밀번호를 변경하시겠습니까?");
+
+        mailSender.send(mailMessage);
     }
 
     public boolean isInvalidNamePattern(String name) {
         if (name == null) return true;
 
         String regexPattern = "^[가-힣a-zA-Z]+$";
-        if ( Pattern.matches(regexPattern, name.trim()) ) {
-            return false;
-        }
-
-        return true;
+        return !Pattern.matches(regexPattern, name.trim());
     }
 
     public boolean isInvalidEmailPattern(String email) {
         if (email == null) return true;
 
         String regexPattern = "[\\w\\~\\-\\.]+@[\\w\\~\\-]+(\\.[\\w\\~\\-]+)+";
-        if ( Pattern.matches(regexPattern, email.trim()) ) {
-            return false;
-        }
-
-        return true;
+        return !Pattern.matches(regexPattern, email.trim());
     }
 
     public boolean isEmailUser(String email) {
@@ -163,7 +172,7 @@ public class UserService {
 
     public List<Question> getUserBookmark(String myId) {
 
-        User user = userRepository.findById(myId).orElseThrow(()-> new UnauthorizedException("invalid id"));
+        User user = userRepository.findById(myId).orElseThrow(() -> new EntityNotFoundException("invalid id"));
 
         List<String> userBookmarkIds = user.getBookmarks();
 
@@ -174,37 +183,32 @@ public class UserService {
         return questionRepository.findQuestionsByIdIn(userBookmarkIds);
     }
 
-    @Transactional
     public User addBookmark(String myId, String questionId) {
 
-        User user = userRepository.findById(myId).orElseThrow(()-> new UnauthorizedException("invalid id"));
+        User user = userRepository.findById(myId).orElseThrow(() -> new UnauthorizedException("invalid id"));
 
         List<String> userBookmark = user.getBookmarks();
 
-        if(!userBookmark.contains(questionId)) {
+        if (userBookmark.contains(questionId)) {
+            throw new AlreadyExistsException("the question(id:" + questionId + ") is already on your list of bookmark!");
+        } else {
             userBookmark.add(questionId);
             return userRepository.save(user);
-        } else {
-            throw new AlreadyExistsException("Already added question");
         }
-
     }
 
-    @Transactional
     public User dropBookmark(String myId, String questionId) {
 
-        User user = userRepository.findById(myId).orElseThrow(()-> new UnauthorizedException("invalid id"));
+        User user = userRepository.findById(myId).orElseThrow(() -> new UnauthorizedException("invalid id"));
 
         List<String> userBookmark = user.getBookmarks();
 
-            if(userBookmark.contains(questionId)){
-                userBookmark.remove(questionId);
-                return userRepository.save(user);
-
-            } else {
-                throw new EntityNotFoundException("unbookmarked question");
-
-            }
+        if (userBookmark.contains(questionId)) {
+            userBookmark.remove(questionId);
+            return userRepository.save(user);
+        } else {
+            throw new EntityNotFoundException("the question(id:" + questionId + ") is not on your list of bookmark!");
+        }
     }
 
 }
