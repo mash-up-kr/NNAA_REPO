@@ -5,10 +5,7 @@ import com.na.backend.dto.SignUpDto;
 import com.na.backend.dto.UserAuthDto;
 import com.na.backend.dto.UserInfoDto;
 import com.na.backend.entity.Question;
-import com.na.backend.exception.AlreadyExistsException;
-import com.na.backend.exception.EntityNotFoundException;
-import com.na.backend.exception.InvalidException;
-import com.na.backend.exception.InvalidStringException;
+import com.na.backend.exception.*;
 import com.na.backend.service.QuestionService;
 import com.na.backend.service.UserService;
 import io.swagger.annotations.Api;
@@ -104,7 +101,14 @@ public class UserController {
     @ApiOperation(value = "로그인한 사용자 비밀번호 재설정하기", notes = "현재 로그인되어있는 사용자의 id를 path 에 넣어 보낸다")
     @PatchMapping(value = "{userId}/change_password")
     public ResponseEntity<String> resetPasswordForLoginUser(@PathVariable String userId, @RequestParam String newPassword, @RequestParam String newPasswordAgain) {
-        return ResponseEntity.status(HttpStatus.OK).body("소셜로그인 아직 제공하지 않음");
+
+        if (newPassword.equals(newPasswordAgain)){
+            userService.resetPasswordForLoginUser(userId,newPassword,newPasswordAgain);
+        }else{
+            throw new MismatchException("Re-entered password does not match new password");
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @ApiOperation(value = "로그인(카카오/페이스북)", notes = "추후 제작")
