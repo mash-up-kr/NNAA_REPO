@@ -8,6 +8,7 @@ import com.na.backend.entity.Question;
 import com.na.backend.entity.User;
 import com.na.backend.exception.AlreadyExistsException;
 import com.na.backend.exception.EntityNotFoundException;
+import com.na.backend.exception.MismatchException;
 import com.na.backend.exception.UnauthorizedException;
 import com.na.backend.mapper.UserMapper;
 import com.na.backend.repository.QuestionRepository;
@@ -211,4 +212,19 @@ public class UserService {
         }
     }
 
+    public void resetPasswordForLoginUser(String myId, String newPassword, String newPasswordAgain) {
+
+        User user = userRepository.findById(myId).orElseThrow(() -> new UnauthorizedException("invalid id"));
+
+        String password =user.getPassword();
+
+        if(!password.equals(newPassword)){
+                user.setPassword(newPassword);
+                userRepository.save(user);
+        }
+        else{
+            throw new AlreadyExistsException("This new password is the same as the existing password");
+        }
+
+    }
 }
