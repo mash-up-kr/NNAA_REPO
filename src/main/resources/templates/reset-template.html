@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+</head>
+<body>
+<p> <br><span th:text="${userName}"></span></br>님, 안녕하세요!</p>
+<p> 비밀번호를 다시 설정하고 싶으신가요? 비밀번호를 다시 설정하고 싶으시면 <br>아래 링크</br>를 눌러주세요</p>
+<a th:href="@{링크링크+${userId}}">비밀번호 재설정하기</a>
+<p> 감사합니다.</p>
+<p> 너나알아 팀 드림</p>
+</body>
+</html>

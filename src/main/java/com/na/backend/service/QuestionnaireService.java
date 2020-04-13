@@ -2,11 +2,12 @@ package com.na.backend.service;
 
 import com.na.backend.dto.AnswerQuestionnaireDto;
 import com.na.backend.dto.InboxQuestionnaireDto;
-import com.na.backend.dto.NewQuestionnaireDto;
+import com.na.backend.dto.QuestionnaireDto;
 import com.na.backend.dto.OutboxQuestionnaireDto;
 import com.na.backend.entity.Questionnaire;
 import com.na.backend.entity.User;
 import com.na.backend.exception.EntityNotFoundException;
+import com.na.backend.exception.InvalidException;
 import com.na.backend.mapper.QuestionMapper;
 import com.na.backend.repository.QuestionnaireRepository;
 import com.na.backend.repository.UserRepository;
@@ -33,23 +34,35 @@ public class QuestionnaireService {
         this.questionMapper = questionMapper;
     }
 
-    public Questionnaire createQuestionnaire(String createUserId, NewQuestionnaireDto newQuestionnaireDto) {
+    public boolean isReceiver(String myId, String questionnaireId) {
+        Questionnaire questionnaire = questionnaireRepository.findById(questionnaireId)
+                .orElseThrow(() -> new EntityNotFoundException("invalid questionnaire id"));
+
+        return myId.equals(questionnaire.getReceiverId());
+    }
+
+    public Questionnaire createQuestionnaire(String createUserId, QuestionnaireDto questionnaireDto) {
         User createUser = userRepository.findById(createUserId)
                 .orElseThrow(() -> new EntityNotFoundException("no user for create user id (" + createUserId + ")"));
 
-        String receiverId = newQuestionnaireDto.getReceiverId();
+        String receiverId = questionnaireDto.getReceiverId();
         User receiver = userRepository.findById(receiverId)
                 .orElseThrow(() -> new EntityNotFoundException("no user for receiver id (" + receiverId + ")"));
 
-        return questionnaireRepository.insert(questionMapper.toQuestionnaireWhenNew(createUser, receiver, newQuestionnaireDto));
+        return questionnaireRepository.insert(questionMapper.toQuestionnaireWhenNew(createUser, receiver, questionnaireDto));
     }
 
     @Transactional
-    public Questionnaire insertAnswer(String questionnaireId, AnswerQuestionnaireDto answerQuestionnaireDto) {
+    public Questionnaire insertAnswer(String myId, String questionnaireId, AnswerQuestionnaireDto answerQuestionnaireDto) {
         Questionnaire questionnaire = questionnaireRepository.findById(questionnaireId)
                 .orElseThrow(() -> new EntityNotFoundException("no questionnaire for id (" + questionnaireId + ")"));
 
-        return questionnaireRepository.save(fillQuestionnaire(questionnaire, answerQuestionnaireDto));
+        // 요청자가 답변자와 일치하는지 확인
+        if (myId.equals(questionnaire.getReceiverId())) {
+            return questionnaireRepository.save(fillQuestionnaire(questionnaire, answerQuestionnaireDto));
+        } else {
+            throw new InvalidException("The Questionnaire(questionnaire id:"+ questionnaireId +") is not for this user(user id:" + myId + ")!");
+        }
     }
 
     public List<OutboxQuestionnaireDto> getOutboxQuestionnaires(String myId) {

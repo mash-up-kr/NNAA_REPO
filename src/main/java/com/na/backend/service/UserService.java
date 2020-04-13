@@ -1,27 +1,24 @@
 package com.na.backend.service;
 
-import com.na.backend.dto.LogInDto;
-import com.na.backend.dto.SignUpDto;
-import com.na.backend.dto.UserAuthDto;
-import com.na.backend.dto.UserInfoDto;
-import com.na.backend.entity.Question;
+import com.na.backend.dto.*;
 import com.na.backend.entity.User;
 import com.na.backend.exception.AlreadyExistsException;
 import com.na.backend.exception.EntityNotFoundException;
-import com.na.backend.exception.MismatchException;
 import com.na.backend.exception.UnauthorizedException;
 import com.na.backend.mapper.UserMapper;
 import com.na.backend.repository.QuestionRepository;
 import com.na.backend.repository.UserRepository;
 import com.na.backend.util.EncryptManager;
-import org.springframework.mail.SimpleMailMessage;
+import com.na.backend.util.MailManager;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.mail.MessagingException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 @Service
@@ -63,7 +60,7 @@ public class UserService {
                 .name(userName)
                 .password(encryptPassword)
                 .salt(salt)
-                .bookmarks(new ArrayList<>())
+                .bookmarks(new HashMap<>())
                 .token(token)
                 .build();
 
@@ -102,12 +99,17 @@ public class UserService {
                     .uid(uid)
                     .name("")
                     .salt(salt)
-                    .bookmarks(new ArrayList<>())
+                    .bookmarks(new HashMap<>())
                     .token(token).build();
 
             return userRepository.insert(newUser);
         }
     }
+
+    // TODO: 카테고리 목록 보여주는 api ( 카테고리와 관계에 대한 명칭을 정확히 한 후에 )
+//    public List<CategoryRelationshipDto> getRelationshipList() {
+//        return userMapper.toCategoryRelationshipDto();
+//    }
 
     public List<UserInfoDto> findUsers(String name) {
         List<User> users = userRepository.findUsersByName(name);
@@ -134,17 +136,11 @@ public class UserService {
     }
 
     @Transactional
-    public void sendResetPasswordEmail(String email) {
-        User user = userRepository.findByEmail(email).get();
+    public void sendResetPasswordEmail(String email) throws MessagingException {
         //String timeLimit = LocalDateTime.now().toString(); // 유효시간 몇분으로 설정할지..?
         //String resetLink = "" + userId + timeLimit;
 
-        SimpleMailMessage mailMessage = new SimpleMailMessage();
-        mailMessage.setTo(email);
-        mailMessage.setSubject("비밀번호 변경 확인 메일");
-        mailMessage.setText(user.getId() + " 님 비밀번호를 변경하시겠습니까?");
-
-        mailSender.send(mailMessage);
+        MailManager.sendResetMail(email, userRepository.findByEmail(email).get());
     }
 
     public boolean isInvalidNamePattern(String name) {
@@ -171,44 +167,41 @@ public class UserService {
         return userRepository.findByUid(uid).isPresent();
     }
 
-    public List<Question> getUserBookmark(String myId) {
-
+    public Map<String, BookmarkQuestionDto> getUserBookmark(String myId) {
         User user = userRepository.findById(myId).orElseThrow(() -> new EntityNotFoundException("invalid id"));
+        Map<String, BookmarkQuestionDto> userBookmarks = user.getBookmarks();
 
-        List<String> userBookmarkIds = user.getBookmarks();
-
-        if (userBookmarkIds.size() == 0) {
+        if (userBookmarks.size() == 0) {
             throw new EntityNotFoundException("There's nothing on your list of bookmark!");
         }
 
-        return questionRepository.findQuestionsByIdIn(userBookmarkIds);
+        return userBookmarks;
     }
 
-    public User addBookmark(String myId, String questionId) {
-
+    public String addBookmark(String myId, BookmarkQuestionDto bookmarkQuestionDto) {
         User user = userRepository.findById(myId).orElseThrow(() -> new UnauthorizedException("invalid id"));
 
-        List<String> userBookmark = user.getBookmarks();
+        Map<String, BookmarkQuestionDto> userBookmarks = user.getBookmarks();
+        String nextId = String.valueOf(bookmarkQuestionDto.getContent().hashCode()); // TODO: 키값 어떤걸로 할지.. 정하기..
 
-        if (userBookmark.contains(questionId)) {
-            throw new AlreadyExistsException("the question(id:" + questionId + ") is already on your list of bookmark!");
-        } else {
-            userBookmark.add(questionId);
-            return userRepository.save(user);
-        }
+        // TODO: content, choices 일치하는거 잡는거는 DB에서 하도록하고 에러 잡아서 처리 (RDB로 옮기고 나면.. )
+        userBookmarks.put(nextId,bookmarkQuestionDto);
+        user.setBookmarks(userBookmarks);
+        userRepository.save(user);
+        return nextId;
     }
 
-    public User dropBookmark(String myId, String questionId) {
-
+    public User dropBookmark(String myId, String bookmarkQuestionId) {
         User user = userRepository.findById(myId).orElseThrow(() -> new UnauthorizedException("invalid id"));
 
-        List<String> userBookmark = user.getBookmarks();
+        Map<String, BookmarkQuestionDto> userBookmarks = user.getBookmarks();
 
-        if (userBookmark.contains(questionId)) {
-            userBookmark.remove(questionId);
+        if (userBookmarks.containsKey(bookmarkQuestionId)) {
+            userBookmarks.remove(bookmarkQuestionId);
+            user.setBookmarks(userBookmarks);
             return userRepository.save(user);
         } else {
-            throw new EntityNotFoundException("the question(id:" + questionId + ") is not on your list of bookmark!");
+            throw new EntityNotFoundException("the question(id:" + bookmarkQuestionId + ") is not on your list of bookmark!");
         }
     }
 

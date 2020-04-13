@@ -1,5 +1,6 @@
 package com.na.backend.entity;
 
+import com.na.backend.dto.QuestionnaireQuestionDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,7 +23,7 @@ public class Questionnaire {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime answeredAt;
-    private Map<String,String> questions;
+    private Map<String, QuestionnaireQuestionDto> questions;
     private Map<String,String> answers;
 
     @Builder
@@ -36,7 +37,7 @@ public class Questionnaire {
                          LocalDateTime createdAt,
                          LocalDateTime updatedAt,
                          LocalDateTime answeredAt,
-                         Map<String, String> questions,
+                         Map<String, QuestionnaireQuestionDto> questions,
                          Map<String, String> answers) {
         this.id = id;
         this.createUserId = createUserId;
