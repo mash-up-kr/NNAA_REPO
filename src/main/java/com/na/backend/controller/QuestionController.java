@@ -27,25 +27,6 @@ public class QuestionController {
         this.questionService = questionService;
     }
 
-    @ApiOperation(value = "직접 질문 입력해서 질문 추가하기")
-    @PostMapping
-    public ResponseEntity<Question> insertQuestion(@RequestBody NewQuestionDto newQuestionDto) {
-        String category = newQuestionDto.getCategory();
-        String type = newQuestionDto.getType();
-
-        if (questionService.isInvalidCategory(category)) {
-            throw new InvalidCategoryException("Invalid category(" + category + ")!");
-        }
-
-        if (questionService.isInvalidType(type)) {
-            throw new InvalidTypeException("Invalid type(" + type + ")!");
-        }
-
-        Question newQuestion = questionService.insertNewQuestion(newQuestionDto);
-
-        return ResponseEntity.status(HttpStatus.OK).body(newQuestion);
-    }
-
 //    // TODO: category 나 type 둘 중 하나만 입력할 경우, 아예 입력 안할 경우에 대한 처리
 //    @ApiOperation(value = "category, type 별 미리 setup 질문들 보여주기", notes = "질문 고를때 질문들 내려주기")
 //    @ApiImplicitParams({
@@ -59,13 +40,13 @@ public class QuestionController {
 //        return ResponseEntity.status(HttpStatus.OK).body(recommendationQuestions);
 //    }
 
-    @ApiOperation(value = "문제지 첫 기본세팅", notes = "카테고리(나와 상대방의 관계) 선택 후 질문지의 기본 세팅을 위해 랜덤으로 질문 30개를 가져옵니다")
+    @ApiOperation(value = "문제지 첫 기본세팅", notes = "카테고리(나와 상대방의 관계) 선택 후 질문지의 기본 세팅을 위해 랜덤으로 질문 10개를 가져옵니다")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "category", value = "문제 카테고리", paramType = "query"),
             @ApiImplicitParam(name = "size", value = "문제 개수", paramType = "query")
     })
     @GetMapping("/random")
-    public ResponseEntity<List<Question>> getRandomQuestions(@RequestParam String category, @RequestParam(defaultValue = "30") Integer size) {
+    public ResponseEntity<List<Question>> getRandomQuestions(@RequestParam String category, @RequestParam(defaultValue = "10") Integer size) {
         if (questionService.isInvalidCategory(category)) {
             throw new InvalidCategoryException("Invalid category(" + category + ")!");
         }

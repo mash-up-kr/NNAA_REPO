@@ -12,25 +12,24 @@ import java.util.List;
 @Component
 public class QuestionMapper {
 
-    public Question toQuestion(NewQuestionDto newQuestionDto) {
+    public Question toQuestion(QuestionnaireQuestionDto questionDto) {
         return Question.builder()
-                .type(newQuestionDto.getType())
-                .category(newQuestionDto.getCategory())
-                .content(newQuestionDto.getContent())
-                .choices(newQuestionDto.getChoices())
+                .type(questionDto.getType())
+                .content(questionDto.getContent())
+                .choices(questionDto.getChoices())
                 .build();
     }
 
-    public Questionnaire toQuestionnaireWhenNew(User createUser, User receiver, NewQuestionnaireDto newQuestionnaireDto) {
+    public Questionnaire toQuestionnaireWhenNew(User createUser, User receiver, QuestionnaireDto questionnaireDto) {
         return Questionnaire.builder()
                 .createUserId(createUser.getId())
                 .createUserName(createUser.getName())
                 .receiverId(receiver.getId())
                 .receiverName(receiver.getName())
                 .completeFlag(Boolean.FALSE)
-                .category(newQuestionnaireDto.getCategory())
-                .questions(newQuestionnaireDto.getQuestions())
-                .createdAt(newQuestionnaireDto.getCreatedAt())
+                .category(questionnaireDto.getCategory())
+                .questions(questionnaireDto.getQuestions())
+                .createdAt(questionnaireDto.getCreatedAt())
                 .build();
     }
 
@@ -39,6 +38,8 @@ public class QuestionMapper {
 
         questionnaires.forEach(questionnaire ->
                 inboxQuestionnaireDtos.add(InboxQuestionnaireDto.builder()
+                        .id(questionnaire.getId())
+                        .createdAt(questionnaire.getCreatedAt())
                         .senderId(questionnaire.getCreateUserId())
                         .senderName(questionnaire.getCreateUserName())
                         .category(questionnaire.getCategory())
@@ -54,6 +55,8 @@ public class QuestionMapper {
 
         questionnaires.forEach(questionnaire ->
                 outboxQuestionnaireDtos.add(OutboxQuestionnaireDto.builder()
+                        .id(questionnaire.getId())
+                        .createdAt(questionnaire.getCreatedAt())
                         .receiverId(questionnaire.getReceiverId())
                         .receiverName(questionnaire.getReceiverName())
                         .category(questionnaire.getCategory())

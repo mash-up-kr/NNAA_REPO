@@ -1,19 +1,20 @@
 package com.na.backend.dto;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Map;
 
 @Getter
 @Setter
 @NoArgsConstructor
-public class NewQuestionDto {
+public class QuestionWithAnswerDto {
 
     @ApiModelProperty(example = "객관식")
     private String type;
-    @ApiModelProperty(example = "친구")
-    private String category;
     @ApiModelProperty(example = "너가 생각하는 나의 성격은?")
     private String content;
     @ApiModelProperty(example = "{\n" +
@@ -25,18 +26,16 @@ public class NewQuestionDto {
     private Map<String, String> choices;
 
     @Builder
-    public NewQuestionDto(String type, String content, String category, Map<String, String> choices) {
+    public QuestionWithAnswerDto(String type, String content, Map<String, String> choices) {
         this.type = type;
-        this.category = category;
         this.content = content;
         this.choices = choices;
     }
 
     @Override
     public String toString() {
-        return "NewQuestionDto{" +
+        return "QuestionDto{" +
                 "type='" + type + '\'' +
-                ", category='" + category + '\'' +
                 ", content='" + content + '\'' +
                 ", choices=" + choices +
                 '}';

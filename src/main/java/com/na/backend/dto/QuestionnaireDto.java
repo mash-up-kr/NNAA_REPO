@@ -10,18 +10,18 @@ import java.util.Map;
 @Getter
 @Setter
 @NoArgsConstructor
-public class NewQuestionnaireDto {
+public class QuestionnaireDto {
 
     private String receiverId;
     private String category;
     private LocalDateTime createdAt;
-    private Map<String, String> questions;
+    private Map<String, QuestionnaireQuestionDto> questions;
 
     @Builder
-    public NewQuestionnaireDto(String receiverId,
-                               String category,
-                               LocalDateTime createdAt,
-                               Map<String, String> questions) {
+    public QuestionnaireDto(String receiverId,
+                            String category,
+                            LocalDateTime createdAt,
+                            Map<String, QuestionnaireQuestionDto> questions) {
         this.receiverId = receiverId;
         this.category = category;
         this.createdAt = createdAt;

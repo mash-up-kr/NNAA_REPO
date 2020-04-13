@@ -1,11 +1,13 @@
 package com.na.backend.entity;
 
+import com.na.backend.dto.BookmarkQuestionDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import java.util.List;
+import java.util.Map;
 
 @NoArgsConstructor
 @Getter
@@ -20,7 +22,7 @@ public class User {
     private String name;
     private String provider;
     private String token;
-    private List<String> bookmarks;
+    private Map<String, BookmarkQuestionDto> bookmarks;
     private List<String> friends;
 
     @Builder
@@ -32,7 +34,7 @@ public class User {
                 String name,
                 String provider,
                 String token,
-                List<String> bookmarks,
+                Map<String, BookmarkQuestionDto> bookmarks,
                 List<String> friends) {
         this.id = id;
         this.uid = uid;

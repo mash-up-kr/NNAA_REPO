@@ -7,6 +7,7 @@ public enum Category {
     BROTHER("오빠/형"),
     YOUNGER("동생"),
     FRIEND("친구"),
+    VIP("소중한사람"),
     LOVER("연인");
 
     String value;

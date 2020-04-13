@@ -2,9 +2,10 @@ package com.na.backend.controller;
 
 import com.na.backend.dto.AnswerQuestionnaireDto;
 import com.na.backend.dto.InboxQuestionnaireDto;
-import com.na.backend.dto.NewQuestionnaireDto;
+import com.na.backend.dto.QuestionnaireDto;
 import com.na.backend.dto.OutboxQuestionnaireDto;
 import com.na.backend.entity.Questionnaire;
+import com.na.backend.exception.InvalidException;
 import com.na.backend.service.QuestionnaireService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -29,21 +30,25 @@ public class QuestionnaireController {
         this.questionnaireService = questionnaireService;
     }
 
-    @ApiOperation(value = "질문지 보내기", notes = "질문지를 1~20까지 작성후 전송 ")
+    @ApiOperation(value = "질문지 보내기", notes = "질문지를 상대방에게 전송한다")
     @PostMapping
-    public ResponseEntity<Questionnaire> sendQuestionnaire(@RequestBody NewQuestionnaireDto newQuestionnaireDto, HttpServletRequest request) {
+    public ResponseEntity<Questionnaire> sendQuestionnaire(@RequestBody QuestionnaireDto questionnaireDto, HttpServletRequest request) {
         String myId = request.getHeader(HEADER_ID);
-        return ResponseEntity.status(HttpStatus.OK).body(questionnaireService.createQuestionnaire(myId, newQuestionnaireDto));
+        return ResponseEntity.status(HttpStatus.OK).body(questionnaireService.createQuestionnaire(myId, questionnaireDto));
     }
 
+    // TODO: 답변하기 method 결정하기 Ex. PUT(멱등성) -> 전체 새로 업데이트 ? PATCH(비멱등성) -> 수정할 것만 수정 ? 현재는 PUT 임.. PATCH 가 더 안전해 보이긴 함
     @ApiOperation(value = "질문지에 답변하기", notes = "질문지에 응답하기")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "questionnaireId", value = "질문지 번호", paramType = "path", required = true)
     })
-    @PatchMapping("/{questionnaireId}")
-    public ResponseEntity<Questionnaire> answerQuestionnaire(@PathVariable String questionnaireId,
+    @PutMapping("/{questionnaireId}")
+    public ResponseEntity<Questionnaire> answerQuestionnaire(HttpServletRequest request,
+                                                             @PathVariable String questionnaireId,
                                                              @RequestBody AnswerQuestionnaireDto answerQuestionnaireDto) {
-        return ResponseEntity.status(HttpStatus.OK).body(questionnaireService.insertAnswer(questionnaireId, answerQuestionnaireDto));
+        String myId = request.getHeader(HEADER_ID);
+
+        return ResponseEntity.status(HttpStatus.OK).body(questionnaireService.insertAnswer(myId, questionnaireId, answerQuestionnaireDto));
     }
 
     @ApiOperation(value = "질문지 보기", notes = "질문지 하나만 보기! / 답변 보기 / 보관함에서 보기")
@@ -55,7 +60,6 @@ public class QuestionnaireController {
 
         return ResponseEntity.status(HttpStatus.OK).body(questionnaireService.getQuestionnaire(questionnaireId));
     }
-
 
     @ApiOperation(value = "보낸 질문지 리스트 보기", notes = "질문자가 자신이 보낸 질문지들을 볼 수 있다. (현재 작성하고있는 질문지도 볼수 있다? => 추후 논의 필요) ")
     @GetMapping("/outbox")

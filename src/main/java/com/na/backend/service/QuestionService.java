@@ -1,6 +1,6 @@
 package com.na.backend.service;
 
-import com.na.backend.dto.NewQuestionDto;
+import com.na.backend.dto.QuestionnaireQuestionDto;
 import com.na.backend.entity.Question;
 import com.na.backend.mapper.QuestionMapper;
 import com.na.backend.repository.QuestionRepository;
@@ -96,8 +96,8 @@ public class QuestionService {
     }
 
 
-    public Question insertNewQuestion(NewQuestionDto newQuestionDto) {
-        return questionRepository.insert(questionMapper.toQuestion(newQuestionDto));
+    public Question insertNewQuestion(QuestionnaireQuestionDto questionDto) {
+        return questionRepository.insert(questionMapper.toQuestion(questionDto));
     }
 
 }
