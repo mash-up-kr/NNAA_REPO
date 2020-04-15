@@ -18,10 +18,12 @@ public class Question {
     private Map<String, String> choices;
 
     @Builder
-    public Question(String content,
+    public Question(String id,
+                    String content,
                     String category,
                     String type,
                     Map<String, String> choices){
+        this.id = id;
         this.content = content;
         this.category = category;
         this.type = type;

@@ -1,6 +1,7 @@
 package com.na.backend.controller;
 
 import com.na.backend.dto.*;
+import com.na.backend.entity.Question;
 import com.na.backend.exception.*;
 import com.na.backend.service.QuestionService;
 import com.na.backend.service.UserService;
@@ -151,7 +152,7 @@ public class UserController {
 
     @ApiOperation(value = "즐겨찾기해둔 질문들 보여주기", notes = "질문 고를때 즐겨찾기 질문들 보여주기")
     @GetMapping("/bookmark")
-    public ResponseEntity<Map<String, BookmarkQuestionDto>> getBookmarkList(HttpServletRequest request) {
+    public ResponseEntity<List<Question>> getBookmarkList(HttpServletRequest request) {
         String myId = request.getHeader(HEADER_ID);
 
         return ResponseEntity.status(HttpStatus.OK).body(userService.getUserBookmark(myId));
@@ -178,7 +179,7 @@ public class UserController {
 
     @ApiOperation(value = "즐겨찾기 취소", notes = "질문 즐겨찾기 취소하기 ")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "questionId", value = "문제 번호", paramType = "path", required = true)
+            @ApiImplicitParam(name = "bookmarkQuestionId", value = "즐겨찾기 질문번호", paramType = "path", required = true)
     })
     @DeleteMapping("/bookmark/{bookmarkQuestionId}")
     public ResponseEntity<Void> deleteBookmark(@PathVariable String bookmarkQuestionId, HttpServletRequest request) {

@@ -1,6 +1,7 @@
 package com.na.backend.service;
 
 import com.na.backend.dto.*;
+import com.na.backend.entity.Question;
 import com.na.backend.entity.User;
 import com.na.backend.exception.AlreadyExistsException;
 import com.na.backend.exception.EntityNotFoundException;
@@ -167,7 +168,7 @@ public class UserService {
         return userRepository.findByUid(uid).isPresent();
     }
 
-    public Map<String, BookmarkQuestionDto> getUserBookmark(String myId) {
+    public List<Question> getUserBookmark(String myId) {
         User user = userRepository.findById(myId).orElseThrow(() -> new EntityNotFoundException("invalid id"));
         Map<String, BookmarkQuestionDto> userBookmarks = user.getBookmarks();
 
@@ -175,7 +176,7 @@ public class UserService {
             throw new EntityNotFoundException("There's nothing on your list of bookmark!");
         }
 
-        return userBookmarks;
+        return userMapper.toQuestions(userBookmarks);
     }
 
     public String addBookmark(String myId, BookmarkQuestionDto bookmarkQuestionDto) {
