@@ -6,11 +6,9 @@
 > 
 > 주변 사람에 대해 알고 싶었던 정보들을 질문지로 구성해 전달하고 답변을 받는 서비스
 
-## Backend Member
-이름 | 역할
-:--: | :--:
-김수진 | Backend 
-김지혜 | Backend
+
+## NNAA App (Android)
+<img src="https://user-images.githubusercontent.com/15043840/79289940-b8c98500-7f05-11ea-9f87-cecf73671baf.png" width="700">
 
 
 ## Environment
@@ -22,5 +20,12 @@
 - Travis
 
 ## 주요 기능
+<img src="https://user-images.githubusercontent.com/15043840/79288114-d5af8980-7f00-11ea-9d83-557f0d7ce70f.png" width="600">
+<img src="https://user-images.githubusercontent.com/15043840/79288169-0263a100-7f01-11ea-8e20-736a623ce7dd.png" width="600">
 
 
+## Backend Member
+이름 | 역할
+:--: | :--:
+김수진 | Backend 
+김지혜 | Backend
