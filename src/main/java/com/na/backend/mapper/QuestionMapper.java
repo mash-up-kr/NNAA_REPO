@@ -1,24 +1,14 @@
 package com.na.backend.mapper;
 
 import com.na.backend.dto.*;
-import com.na.backend.entity.Question;
 import com.na.backend.entity.Questionnaire;
 import com.na.backend.entity.User;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Component
 public class QuestionMapper {
-
-    public Question toQuestion(QuestionnaireQuestionDto questionDto) {
-        return Question.builder()
-                .type(questionDto.getType())
-                .content(questionDto.getContent())
-                .choices(questionDto.getChoices())
-                .build();
-    }
 
     public Questionnaire toQuestionnaireWhenNew(User createUser, User receiver, QuestionnaireDto questionnaireDto) {
         return Questionnaire.builder()
@@ -30,6 +20,47 @@ public class QuestionMapper {
                 .category(questionnaireDto.getCategory())
                 .questions(questionnaireDto.getQuestions())
                 .createdAt(questionnaireDto.getCreatedAt())
+                .build();
+    }
+
+    public QuestionnaireResponseDto toQuestionnaireResponseDto(Questionnaire questionnaire, Map<String, BookmarkQuestionDto> myBookmarks) {
+        // TODO: 질문이 즐겨찾기의 질문과 동일한지 체크하는 로직 함수로 분리
+        Map<String, QuestionnaireQuestionDto> questionsWithoutBookmarkFlag = questionnaire.getQuestions();
+        Map<String, QuestionnaireQuestionResponseDto> questionsWithBookmarkFlag = new HashMap<>();
+
+        for(String key: questionsWithoutBookmarkFlag.keySet()) {
+            QuestionnaireQuestionDto questionWithoutBookmarkFlag = questionsWithoutBookmarkFlag.get(key);
+
+            StringBuilder questionString = new StringBuilder(questionWithoutBookmarkFlag.getContent());
+            if(questionWithoutBookmarkFlag.getChoices() != null){
+                for(String choiceString: questionWithoutBookmarkFlag.getChoices().values()) {
+                    questionString.append(choiceString);
+                }
+            }
+            int questionHash = questionString.toString().hashCode();
+
+            questionsWithBookmarkFlag.put(key,
+                    QuestionnaireQuestionResponseDto.builder()
+                            .content(questionWithoutBookmarkFlag.getContent())
+                            .choices(questionWithoutBookmarkFlag.getChoices())
+                            .type(questionWithoutBookmarkFlag.getType())
+                            .isBookmarked(myBookmarks.containsKey(String.valueOf(questionHash)))
+                            .build());
+        }
+
+        return QuestionnaireResponseDto.builder()
+                .id(questionnaire.getId())
+                .createUserId(questionnaire.getCreateUserId())
+                .createUserName(questionnaire.getCreateUserName())
+                .receiverId(questionnaire.getReceiverId())
+                .receiverName(questionnaire.getReceiverName())
+                .completeFlag(questionnaire.getCompleteFlag())
+                .category(questionnaire.getCategory())
+                .questions(questionsWithBookmarkFlag)
+                .answers(questionnaire.getAnswers())
+                .createdAt(questionnaire.getCreatedAt())
+                .updatedAt(questionnaire.getUpdatedAt())
+                .answeredAt(questionnaire.getAnsweredAt())
                 .build();
     }
 

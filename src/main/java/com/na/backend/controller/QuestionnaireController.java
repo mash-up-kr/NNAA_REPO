@@ -1,11 +1,6 @@
 package com.na.backend.controller;
 
-import com.na.backend.dto.AnswerQuestionnaireDto;
-import com.na.backend.dto.InboxQuestionnaireDto;
-import com.na.backend.dto.QuestionnaireDto;
-import com.na.backend.dto.OutboxQuestionnaireDto;
-import com.na.backend.entity.Questionnaire;
-import com.na.backend.exception.InvalidException;
+import com.na.backend.dto.*;
 import com.na.backend.service.QuestionnaireService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -32,7 +27,7 @@ public class QuestionnaireController {
 
     @ApiOperation(value = "질문지 보내기", notes = "질문지를 상대방에게 전송한다")
     @PostMapping
-    public ResponseEntity<Questionnaire> sendQuestionnaire(@RequestBody QuestionnaireDto questionnaireDto, HttpServletRequest request) {
+    public ResponseEntity<QuestionnaireResponseDto> sendQuestionnaire(@RequestBody QuestionnaireDto questionnaireDto, HttpServletRequest request) {
         String myId = request.getHeader(HEADER_ID);
         return ResponseEntity.status(HttpStatus.OK).body(questionnaireService.createQuestionnaire(myId, questionnaireDto));
     }
@@ -43,9 +38,9 @@ public class QuestionnaireController {
             @ApiImplicitParam(name = "questionnaireId", value = "질문지 번호", paramType = "path", required = true)
     })
     @PutMapping("/{questionnaireId}")
-    public ResponseEntity<Questionnaire> answerQuestionnaire(HttpServletRequest request,
-                                                             @PathVariable String questionnaireId,
-                                                             @RequestBody AnswerQuestionnaireDto answerQuestionnaireDto) {
+    public ResponseEntity<QuestionnaireResponseDto> answerQuestionnaire(HttpServletRequest request,
+                                                                        @PathVariable String questionnaireId,
+                                                                        @RequestBody AnswerQuestionnaireDto answerQuestionnaireDto) {
         String myId = request.getHeader(HEADER_ID);
 
         return ResponseEntity.status(HttpStatus.OK).body(questionnaireService.insertAnswer(myId, questionnaireId, answerQuestionnaireDto));
@@ -56,9 +51,11 @@ public class QuestionnaireController {
             @ApiImplicitParam(name = "questionnaireId", value = "질문지 번호", paramType = "path", required = true)
     })
     @GetMapping("/{questionnaireId}")
-    public ResponseEntity<Questionnaire> getQuestionnaire(@PathVariable String questionnaireId) {
+    public ResponseEntity<QuestionnaireResponseDto> getQuestionnaire(HttpServletRequest request,
+                                                                     @PathVariable String questionnaireId) {
+        String myId = request.getHeader(HEADER_ID);
 
-        return ResponseEntity.status(HttpStatus.OK).body(questionnaireService.getQuestionnaire(questionnaireId));
+        return ResponseEntity.status(HttpStatus.OK).body(questionnaireService.getQuestionnaire(myId, questionnaireId));
     }
 
     @ApiOperation(value = "보낸 질문지 리스트 보기", notes = "질문자가 자신이 보낸 질문지들을 볼 수 있다. (현재 작성하고있는 질문지도 볼수 있다? => 추후 논의 필요) ")

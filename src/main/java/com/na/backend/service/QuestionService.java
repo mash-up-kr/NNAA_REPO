@@ -94,10 +94,4 @@ public class QuestionService {
 
         return !questionRepository.findById(questionId).isPresent();
     }
-
-
-    public Question insertNewQuestion(QuestionnaireQuestionDto questionDto) {
-        return questionRepository.insert(questionMapper.toQuestion(questionDto));
-    }
-
 }
