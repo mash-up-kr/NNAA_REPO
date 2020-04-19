@@ -183,9 +183,18 @@ public class UserService {
         User user = userRepository.findById(myId).orElseThrow(() -> new UnauthorizedException("invalid id"));
 
         Map<String, BookmarkQuestionDto> userBookmarks = user.getBookmarks();
-        String nextId = String.valueOf(bookmarkQuestionDto.getContent().hashCode()); // TODO: 키값 어떤걸로 할지.. 정하기..
 
-        // TODO: content, choices 일치하는거 잡는거는 DB에서 하도록하고 에러 잡아서 처리 (RDB로 옮기고 나면.. )
+        // TODO: 질문, 보기 앞뒤 공백제거
+        StringBuilder questionString = new StringBuilder(bookmarkQuestionDto.getContent());
+        if(bookmarkQuestionDto.getChoices() != null) {
+            for(String choiceString : bookmarkQuestionDto.getChoices().values()) {
+                questionString.append(choiceString);
+            }
+        }
+
+        // 즐겨찾기등록 시 생성되는 id = 질문내용과 보기들을 이어붙인 문자열의 해시값
+        String nextId = String.valueOf(questionString.toString().hashCode());
+
         userBookmarks.put(nextId,bookmarkQuestionDto);
         user.setBookmarks(userBookmarks);
         userRepository.save(user);
