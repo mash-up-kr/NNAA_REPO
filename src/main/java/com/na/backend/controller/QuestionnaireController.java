@@ -1,8 +1,6 @@
 package com.na.backend.controller;
 
 import com.na.backend.dto.*;
-import com.na.backend.entity.Questionnaire;
-import com.na.backend.exception.InvalidException;
 import com.na.backend.service.QuestionnaireService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
