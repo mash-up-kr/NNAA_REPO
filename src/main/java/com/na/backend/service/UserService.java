@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.mail.MessagingException;
+import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -138,7 +139,8 @@ public class UserService {
     }
 
     @Transactional
-    public void sendResetPasswordEmail(String email) throws MessagingException {
+    public void sendResetPasswordEmail(String email) throws MessagingException, UnsupportedEncodingException {
+        // TODO: 유효기한있는 이메일 설정
         //String timeLimit = LocalDateTime.now().toString(); // 유효시간 몇분으로 설정할지..?
         //String resetLink = "" + userId + timeLimit;
 

@@ -4,36 +4,39 @@ import com.na.backend.entity.User;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
-import org.thymeleaf.context.Context;
-import org.thymeleaf.spring5.SpringTemplateEngine;
-
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import java.io.UnsupportedEncodingException;
 
 @Component
 public class MailManager {
 
     private static JavaMailSender javaMailSender;
-    private static SpringTemplateEngine templateEngine;
 
     public MailManager (JavaMailSender javaMailSender) {
         this.javaMailSender = javaMailSender;
     }
 
-    public static void sendResetMail(String email, User user) throws MessagingException {
+    public static void sendResetMail(String email, User user) throws MessagingException, UnsupportedEncodingException {
         MimeMessage resetMail = javaMailSender.createMimeMessage();
+
         MimeMessageHelper helper = new MimeMessageHelper(resetMail, true);
-
-        helper.setSubject("비밀번호 변경 확인 메일");
         helper.setTo(email);
+        helper.setSubject("[너나알아] 비밀번호 변경 확인 메일");
 
-        Context context = new Context();
-        context.setVariable("userId", user.getId());
-        context.setVariable("userName", user.getName());
-        System.out.println("여기? ");
-
-        String contentHTML = templateEngine.process("reset-template",context);
-        helper.setText(contentHTML, true);
+        String resetMessage = new StringBuffer().append("<p>" + user.getName() + "님, 안녕하세요!</p>")
+                .append("<p>비밀번호를 다시 설정하고 싶으신가요?</p>")
+                .append("<p><b>아래 링크</b>를 눌러주세요!</p>")
+                .append("<a href='http://www.nnaa.com/reset")
+                // TODO: userID 넘길 수 있도록
+                //.append("<a href='http://www.nnaa.com/reset?uid=")
+                //.append(user.getId())
+                .append("' target='_blenk'>비밀번호 재설정하기</a>")
+                .append("<p>감사합니다.</p>")
+                .append("<p>너나알아 팀 드림</p>")
+                .toString();
+        helper.setText(resetMessage, true);
+        helper.setFrom("jaeeee2020@gmail.com","NNAA");
 
         javaMailSender.send(resetMail);
     }
