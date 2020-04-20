@@ -56,6 +56,7 @@ public class QuestionMapper {
             } else {
                 questionWithBookmarkFlag.setIsBookmarked(Boolean.FALSE);
             }
+            questionsWithBookmarkFlag.add(questionWithBookmarkFlag);
         }
 
         return questionsWithBookmarkFlag;
