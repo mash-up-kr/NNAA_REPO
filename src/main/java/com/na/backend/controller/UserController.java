@@ -98,7 +98,9 @@ public class UserController {
 
     @ApiOperation(value = "재설정 이메일을 거쳐온 후 비번 재설정", notes = "재설정 이메일 통해서 받은 user_id 와 함께 비밀번호 재설정하기")
     @PutMapping(value = "/password/email")
-    public ResponseEntity<String> resetPasswordThroughEmail(HttpServletRequest request, @RequestParam String newPassword, @RequestParam String newPasswordAgain) {
+    public ResponseEntity<String> resetPasswordThroughEmail(HttpServletRequest request,
+                                                            @RequestParam String newPassword,
+                                                            @RequestParam String newPasswordAgain) {
         String myId = request.getHeader(HEADER_ID);
 
         if (newPassword.equals(newPasswordAgain)){

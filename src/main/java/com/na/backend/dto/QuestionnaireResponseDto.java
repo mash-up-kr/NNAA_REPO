@@ -23,7 +23,7 @@ public class QuestionnaireResponseDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime answeredAt;
-    private Map<String, QuestionnaireQuestionResponseDto> questions;
+    private Map<String, QuestionResponseDto> questions;
     private Map<String,String> answers;
 
     @Builder
@@ -37,7 +37,7 @@ public class QuestionnaireResponseDto {
                                     LocalDateTime createdAt,
                                     LocalDateTime updatedAt,
                                     LocalDateTime answeredAt,
-                                    Map<String, QuestionnaireQuestionResponseDto> questions,
+                                    Map<String, QuestionResponseDto> questions,
                                     Map<String, String> answers) {
         this.id = id;
         this.createUserId = createUserId;
