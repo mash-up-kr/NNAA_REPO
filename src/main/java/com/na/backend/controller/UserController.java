@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 
@@ -86,7 +87,7 @@ public class UserController {
 
     @ApiOperation(value = "비밀번호 재설정 이메일 보내기", notes = "비밀번호 재설정할 링크를 받을 이메일을 넘겨준다")
     @GetMapping(value = "/password/email")
-    public ResponseEntity<Void> sendResetPasswordEmail(@RequestParam String email) throws MessagingException {
+    public ResponseEntity<Void> sendResetPasswordEmail(@RequestParam String email) throws MessagingException, UnsupportedEncodingException {
         if (userService.isEmailUser(email)) {
             userService.sendResetPasswordEmail(email);
             return ResponseEntity.status(HttpStatus.OK).build();
