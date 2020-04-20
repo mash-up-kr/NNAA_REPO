@@ -101,6 +101,6 @@ public class QuestionService {
     public Boolean isInvalidQuestionId(String questionId) {
         if (questionId == null) return true;
 
-        return questionRepository.findById(questionId).isEmpty();
+        return !questionRepository.findById(questionId).isPresent();
     }
 }
