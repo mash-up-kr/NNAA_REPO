@@ -104,7 +104,7 @@ public class UserController {
         String myId = request.getHeader(HEADER_ID);
 
         if (newPassword.equals(newPasswordAgain)){
-            userService.resetPasswordForLoginUser(myId,newPassword,newPasswordAgain);
+            userService.resetPasswordForLoginUser(myId,newPassword);
         }else{
             throw new MismatchException("Re-entered password does not match new password");
         }
@@ -120,8 +120,11 @@ public class UserController {
                                                             @RequestParam String newPasswordAgain) {
         String myId = request.getHeader(HEADER_ID);
 
-        if (newPassword.equals(newPasswordAgain)){
-            userService.resetPasswordForLoginUser(myId,newPassword,newPasswordAgain);
+        boolean isMatched = userService.isMatchedUserPassword(myId,currentPassword);
+
+
+        if (newPassword.equals(newPasswordAgain) && isMatched){
+            userService.resetPasswordForLoginUser(myId,newPassword);
         }else{
             throw new MismatchException("Re-entered password does not match new password");
         }

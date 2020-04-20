@@ -5,6 +5,7 @@ import com.na.backend.entity.Question;
 import com.na.backend.entity.User;
 import com.na.backend.exception.AlreadyExistsException;
 import com.na.backend.exception.EntityNotFoundException;
+import com.na.backend.exception.MismatchException;
 import com.na.backend.exception.UnauthorizedException;
 import com.na.backend.mapper.UserMapper;
 import com.na.backend.repository.QuestionRepository;
@@ -215,11 +216,11 @@ public class UserService {
         }
     }
 
-    public void resetPasswordForLoginUser(String myId, String newPassword, String newPasswordAgain) {
+    public void resetPasswordForLoginUser(String myId, String newPassword) {
 
         User user = userRepository.findById(myId).orElseThrow(() -> new UnauthorizedException("invalid id"));
 
-        String password =user.getPassword();
+        String password = user.getPassword();
 
         if(!password.equals(newPassword)){
                 user.setPassword(newPassword);
@@ -229,5 +230,18 @@ public class UserService {
             throw new AlreadyExistsException("This new password is the same as the existing password");
         }
 
+    }
+
+    public boolean isMatchedUserPassword(String myId, String currentPassword) {
+
+        User user = userRepository.findById(myId).orElseThrow(() -> new UnauthorizedException("invalid id"));
+
+        String password =user.getPassword();
+
+        if(!password.equals(currentPassword)){
+            throw new MismatchException("Current password does not match existing password");
+        }
+
+        return true;
     }
 }
