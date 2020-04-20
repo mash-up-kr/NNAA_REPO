@@ -47,4 +47,20 @@ public class User {
         this.bookmarks = bookmarks;
         this.friends = friends;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id='" + id + '\'' +
+                ", uid='" + uid + '\'' +
+                ", email='" + email + '\'' +
+                ", salt='" + salt + '\'' +
+                ", password='" + password + '\'' +
+                ", name='" + name + '\'' +
+                ", provider='" + provider + '\'' +
+                ", token='" + token + '\'' +
+                ", bookmarks=" + bookmarks +
+                ", friends=" + friends +
+                '}';
+    }
 }

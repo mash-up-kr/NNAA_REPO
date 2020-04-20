@@ -67,7 +67,8 @@ public class QuestionService {
         }
 
         List<Question> selectedQuestions = questionRepository.findQuestionsByIdIn(selectedQuestionIds);
-
+        // TODO: 30개 id 뽑았는데 실제로 가져오는 question 개수는 21개임..
+        // selectedQuestionsIds 31 개 -> selectedQuestions 21 개
         return questionMapper.toQuestionResponseDto(selectedQuestions, me.getBookmarks());
     }
 
