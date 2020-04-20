@@ -1,6 +1,7 @@
 package com.na.backend.mapper;
 
 import com.na.backend.dto.*;
+import com.na.backend.entity.Question;
 import com.na.backend.entity.Questionnaire;
 import com.na.backend.entity.User;
 import org.springframework.stereotype.Component;
@@ -23,29 +24,68 @@ public class QuestionMapper {
                 .build();
     }
 
+    private String makeHashCode(String content, Map<String, String> choices) {
+        StringBuilder questionString = new StringBuilder(content);
+        if(choices != null){
+            for(String choiceString: choices.values()) {
+                questionString.append(choiceString);
+            }
+        }
+        int questionHash = questionString.toString().hashCode();
+
+        return String.valueOf(questionHash);
+    }
+
+    public List<QuestionResponseDto> toQuestionResponseDto(List<Question> questions, Map<String, BookmarkQuestionDto> myBookmarks) {
+        // TODO: 질문이 즐겨찾기의 질문과 동일한지 체크하는 로직 함수로 분리 (list -> list)
+        List<QuestionResponseDto> questionsWithBookmarkFlag = new ArrayList<>();
+
+        for(Question question: questions) {
+            String questionHashCode = makeHashCode(question.getContent(),
+                                                   question.getChoices());
+
+            QuestionResponseDto questionWithBookmarkFlag = QuestionResponseDto.builder()
+                                                                .content(question.getContent())
+                                                                .choices(question.getChoices())
+                                                                .type(question.getType())
+                                                                .build();
+
+            if (myBookmarks.containsKey(questionHashCode)) {
+                questionWithBookmarkFlag.setId(questionHashCode);
+                questionWithBookmarkFlag.setIsBookmarked(Boolean.TRUE);
+            } else {
+                questionWithBookmarkFlag.setIsBookmarked(Boolean.FALSE);
+            }
+        }
+
+        return questionsWithBookmarkFlag;
+    }
+
     public QuestionnaireResponseDto toQuestionnaireResponseDto(Questionnaire questionnaire, Map<String, BookmarkQuestionDto> myBookmarks) {
-        // TODO: 질문이 즐겨찾기의 질문과 동일한지 체크하는 로직 함수로 분리
+        // TODO: 질문이 즐겨찾기의 질문과 동일한지 체크하는 로직 함수로 분리 (map -> map)
         Map<String, QuestionnaireQuestionDto> questionsWithoutBookmarkFlag = questionnaire.getQuestions();
-        Map<String, QuestionnaireQuestionResponseDto> questionsWithBookmarkFlag = new HashMap<>();
+        Map<String, QuestionResponseDto> questionsWithBookmarkFlag = new HashMap<>();
 
         for(String key: questionsWithoutBookmarkFlag.keySet()) {
             QuestionnaireQuestionDto questionWithoutBookmarkFlag = questionsWithoutBookmarkFlag.get(key);
 
-            StringBuilder questionString = new StringBuilder(questionWithoutBookmarkFlag.getContent());
-            if(questionWithoutBookmarkFlag.getChoices() != null){
-                for(String choiceString: questionWithoutBookmarkFlag.getChoices().values()) {
-                    questionString.append(choiceString);
-                }
-            }
-            int questionHash = questionString.toString().hashCode();
+            String questionHashCode = makeHashCode(questionWithoutBookmarkFlag.getContent(),
+                                                   questionWithoutBookmarkFlag.getChoices());
 
-            questionsWithBookmarkFlag.put(key,
-                    QuestionnaireQuestionResponseDto.builder()
-                            .content(questionWithoutBookmarkFlag.getContent())
-                            .choices(questionWithoutBookmarkFlag.getChoices())
-                            .type(questionWithoutBookmarkFlag.getType())
-                            .isBookmarked(myBookmarks.containsKey(String.valueOf(questionHash)))
-                            .build());
+            QuestionResponseDto questionWithBookmarkFlag = QuestionResponseDto.builder()
+                                                                .content(questionWithoutBookmarkFlag.getContent())
+                                                                .choices(questionWithoutBookmarkFlag.getChoices())
+                                                                .type(questionWithoutBookmarkFlag.getType())
+                                                                .build();
+
+            if (myBookmarks.containsKey(questionHashCode)) {
+                questionWithBookmarkFlag.setId(questionHashCode);
+                questionWithBookmarkFlag.setIsBookmarked(Boolean.TRUE);
+            } else {
+                questionWithBookmarkFlag.setIsBookmarked(Boolean.FALSE);
+            }
+
+            questionsWithBookmarkFlag.put(key, questionWithBookmarkFlag);
         }
 
         return QuestionnaireResponseDto.builder()

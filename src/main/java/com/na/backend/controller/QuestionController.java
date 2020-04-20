@@ -1,9 +1,7 @@
 package com.na.backend.controller;
 
 import com.na.backend.dto.*;
-import com.na.backend.entity.Question;
 import com.na.backend.exception.InvalidCategoryException;
-import com.na.backend.exception.InvalidTypeException;
 import com.na.backend.service.QuestionService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -14,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Api(value = "질문 API")
@@ -21,6 +20,7 @@ import java.util.List;
 @RequestMapping("/question")
 public class QuestionController {
 
+    private static final String HEADER_ID = "id";
     private final QuestionService questionService;
 
     public QuestionController(QuestionService questionService) {
@@ -46,12 +46,16 @@ public class QuestionController {
             @ApiImplicitParam(name = "size", value = "문제 개수", paramType = "query")
     })
     @GetMapping("/random")
-    public ResponseEntity<List<Question>> getRandomQuestions(@RequestParam String category, @RequestParam(defaultValue = "10") Integer size) {
+    public ResponseEntity<List<QuestionResponseDto>> getRandomQuestions(HttpServletRequest request,
+                                                                        @RequestParam String category,
+                                                                        @RequestParam(defaultValue = "10") Integer size) {
+        String myId = request.getHeader(HEADER_ID);
+
         if (questionService.isInvalidCategory(category)) {
             throw new InvalidCategoryException("Invalid category(" + category + ")!");
         }
 
-        List<Question> randomQuestions = questionService.getRandomQuestions(category, size);
+        List<QuestionResponseDto> randomQuestions = questionService.getRandomQuestions(myId, category, size);
 
         return ResponseEntity.status(HttpStatus.OK).body(randomQuestions);
     }

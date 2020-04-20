@@ -1,9 +1,12 @@
 package com.na.backend.service;
 
+import com.na.backend.dto.QuestionResponseDto;
 import com.na.backend.dto.QuestionnaireQuestionDto;
 import com.na.backend.entity.Question;
+import com.na.backend.entity.User;
 import com.na.backend.mapper.QuestionMapper;
 import com.na.backend.repository.QuestionRepository;
+import com.na.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,11 +18,14 @@ public class QuestionService {
 
     private final QuestionRepository questionRepository;
     private final QuestionMapper questionMapper;
+    private final UserRepository userRepository;
 
     public QuestionService(QuestionRepository questionRepository,
-                           QuestionMapper questionMapper) {
+                           QuestionMapper questionMapper,
+                           UserRepository userRepository) {
         this.questionRepository = questionRepository;
         this.questionMapper = questionMapper;
+        this.userRepository = userRepository;
     }
 
     public List<Question> getRecommendationQuestionList(String category, String type) {
@@ -45,7 +51,8 @@ public class QuestionService {
     }
 
     // 위 getRecommendationQuestionList 랑 합쳐야함. category 입력안했을 때의 처리도 할 수 있게
-    public List<Question> getRandomQuestions(String category, Integer size) {
+    public List<QuestionResponseDto> getRandomQuestions(String myId, String category, Integer size) {
+        User me = userRepository.findById(myId).get();
         List<String> questionIds = new ArrayList<>();
 
         questionRepository.getQuestionIdsByCategory(category)
@@ -59,7 +66,9 @@ public class QuestionService {
             selectedQuestionIds.add(questionIds.get(random.nextInt(idsLength)));
         }
 
-        return questionRepository.findQuestionsByIdIn(selectedQuestionIds);
+        List<Question> selectedQuestions = questionRepository.findQuestionsByIdIn(selectedQuestionIds);
+
+        return questionMapper.toQuestionResponseDto(selectedQuestions, me.getBookmarks());
     }
 
     // TODO: dto 생성시에 체크할 수 있도록 util 로 빼기
@@ -92,6 +101,6 @@ public class QuestionService {
     public Boolean isInvalidQuestionId(String questionId) {
         if (questionId == null) return true;
 
-        return !questionRepository.findById(questionId).isPresent();
+        return questionRepository.findById(questionId).isEmpty();
     }
 }

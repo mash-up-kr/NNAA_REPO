@@ -11,8 +11,9 @@ import java.util.Map;
 @Getter
 @Setter
 @NoArgsConstructor
-public class QuestionWithAnswerDto {
+public class QuestionResponseDto {
 
+    private String id;
     @ApiModelProperty(example = "객관식")
     private String type;
     @ApiModelProperty(example = "너가 생각하는 나의 성격은?")
@@ -24,20 +25,29 @@ public class QuestionWithAnswerDto {
             "            \"d\" : \"재밌어\"\n" +
             "    }")
     private Map<String, String> choices;
+    private Boolean isBookmarked;
 
     @Builder
-    public QuestionWithAnswerDto(String type, String content, Map<String, String> choices) {
+    public QuestionResponseDto(String id,
+                               String type,
+                               String content,
+                               Map<String, String> choices,
+                               Boolean isBookmarked) {
+        this.id = id;
         this.type = type;
         this.content = content;
         this.choices = choices;
+        this.isBookmarked = isBookmarked;
     }
 
     @Override
     public String toString() {
-        return "QuestionDto{" +
-                "type='" + type + '\'' +
+        return "QuestionResponseDto{" +
+                "id='" + id + '\'' +
+                ", type='" + type + '\'' +
                 ", content='" + content + '\'' +
                 ", choices=" + choices +
+                ", isBookmarked=" + isBookmarked +
                 '}';
     }
 }
