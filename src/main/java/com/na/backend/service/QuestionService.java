@@ -9,9 +9,7 @@ import com.na.backend.repository.QuestionRepository;
 import com.na.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @Service
 public class QuestionService {
@@ -58,17 +56,17 @@ public class QuestionService {
         questionRepository.getQuestionIdsByCategory(category)
                 .forEach(question -> questionIds.add(question.getId()));
 
-        List<String> selectedQuestionIds = new ArrayList<>();
-
+        Set<String> selectedQuestionIds = new HashSet<>();
         Random random = new Random();
         int idsLength = questionIds.size();
-        for (int i = 0; i < size; i++) {
+
+        size = (idsLength < size) ? idsLength : size; // db에 있는 최대개수를 넘지 않도록
+
+        while (selectedQuestionIds.size() < size) {
             selectedQuestionIds.add(questionIds.get(random.nextInt(idsLength)));
         }
+        List<Question> selectedQuestions = questionRepository.findQuestionsByIdIn(new ArrayList(selectedQuestionIds));
 
-        List<Question> selectedQuestions = questionRepository.findQuestionsByIdIn(selectedQuestionIds);
-        // TODO: 30개 id 뽑았는데 실제로 가져오는 question 개수는 21개임..
-        // selectedQuestionsIds 31 개 -> selectedQuestions 21 개
         return questionMapper.toQuestionResponseDto(selectedQuestions, me.getBookmarks());
     }
 
