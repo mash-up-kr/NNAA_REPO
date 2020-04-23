@@ -97,6 +97,18 @@ public class UserController {
         }
     }
 
+    @ApiOperation(value = "비밀번호 재설정 이메일 보내기", notes = "비밀번호 재설정할 링크를 받을 이메일을 넘겨준다")
+    @GetMapping(value = "/password/email/tmp")
+    public ResponseEntity<Void> sendResetPasswordEmailTmp(@RequestParam String email) throws MessagingException, UnsupportedEncodingException {
+        if (userService.isEmailUser(email)) {
+            userService.sendResetPasswordEmailTmp(email);
+            return ResponseEntity.status(HttpStatus.OK).build();
+        } else {
+            String message = "해당 이메일(" + email + ")을 가진 유저가 없습니다.";
+            throw new EntityNotFoundException(message);
+        }
+    }
+
     @ApiOperation(value = "재설정 이메일을 거쳐온 후 비번 재설정", notes = "재설정 이메일 통해서 받은 user_id 와 함께 비밀번호 재설정하기")
     @PutMapping(value = "/password/email")
     public ResponseEntity<String> resetPasswordThroughEmail(HttpServletRequest request,

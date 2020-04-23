@@ -9,9 +9,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfig implements WebMvcConfigurer {
     private static final String[] EXCLUDE_PATHS = {
             "/*",
-            "/user/email",
+            "/user/email/sign_in",
+            "/user/email/sign_up",
             "/user/social",
-            "/user/password"
+            "/user/password/email"
     };
 
     private static final String[] ADD_PATHS = {

@@ -147,6 +147,16 @@ public class UserService {
         MailManager.sendResetMail(email, userRepository.findByEmail(email).get());
     }
 
+    @Transactional
+    public void sendResetPasswordEmailTmp(String email) throws MessagingException, UnsupportedEncodingException {
+        // TODO: 유효기한있는 이메일 설정
+        //String timeLimit = LocalDateTime.now().toString(); // 유효시간 몇분으로 설정할지..?
+        //String resetLink = "" + userId + timeLimit;
+
+        MailManager.sendResetMailTmp(email, userRepository.findByEmail(email).get());
+    }
+
+
     public boolean isInvalidNamePattern(String name) {
         if (name == null) return true;
 
