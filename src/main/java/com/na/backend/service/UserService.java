@@ -222,10 +222,12 @@ public class UserService {
 
         User user = userRepository.findById(myId).orElseThrow(() -> new UnauthorizedException("invalid id"));
 
-        String password = user.getPassword();
+        String userSalt = user.getSalt();
+        // 새비번 암호화
+        String encryptPassword = EncryptManager.encryptPlainString(newPassword, userSalt);
 
-        if(!password.equals(newPassword)){
-                user.setPassword(newPassword);
+        if(!encryptPassword.equals(user.getPassword())){
+                user.setPassword(encryptPassword);
                 userRepository.save(user);
         }
         else{
@@ -238,9 +240,11 @@ public class UserService {
 
         User user = userRepository.findById(myId).orElseThrow(() -> new UnauthorizedException("invalid id"));
 
-        String password =user.getPassword();
+        String userSalt = user.getSalt();
+        String encryptPassword = EncryptManager.encryptPlainString(currentPassword, userSalt);
 
-        if(!password.equals(currentPassword)){
+
+        if(!encryptPassword.equals(user.getPassword())){
             throw new MismatchException("Current password does not match existing password");
         }
 
