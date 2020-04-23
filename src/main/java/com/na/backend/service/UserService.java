@@ -239,7 +239,6 @@ public class UserService {
     public boolean isMatchedUserPassword(String myId, String currentPassword) {
 
         User user = userRepository.findById(myId).orElseThrow(() -> new UnauthorizedException("invalid id"));
-
         String userSalt = user.getSalt();
         String encryptPassword = EncryptManager.encryptPlainString(currentPassword, userSalt);
 
