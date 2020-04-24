@@ -51,7 +51,7 @@ public class MailManager {
         String resetMessage = new StringBuffer().append("<p>" + user.getName() + "님, 안녕하세요!</p>")
                 .append("<p>비밀번호를 다시 설정하고 싶으신가요?</p>")
                 .append("<p><b>아래 링크</b>를 눌러주세요!</p>")
-                .append("<a href='http://www.nnaa.com/reset?" + user.getId())
+                .append("<a href='http://www.nnaa.com/reset?id=" + user.getId())
                 // TODO: userID 넘길 수 있도록
                 //.append("<a href='http://www.nnaa.com/reset?uid=")
                 //.append(user.getId())
