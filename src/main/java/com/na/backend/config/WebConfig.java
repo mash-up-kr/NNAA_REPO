@@ -19,7 +19,9 @@ public class WebConfig implements WebMvcConfigurer {
             "/questionnaire/*",
             "/question/**",
             "/user/name",
-            "/friend/*"
+            "/friend/*",
+            "/user/password",
+            "/user/email/password"
     };
 
     private final TokenInterceptor tokenInterceptor;
