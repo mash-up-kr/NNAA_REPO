@@ -67,7 +67,7 @@ public class QuestionService {
         }
         List<Question> selectedQuestions = questionRepository.findQuestionsByIdIn(new ArrayList(selectedQuestionIds));
 
-        return questionMapper.toQuestionResponseDto(selectedQuestions, me.getBookmarks());
+        return questionMapper.toQuestionResponseDtoList(selectedQuestions, me.getBookmarks());
     }
 
     // TODO: dto 생성시에 체크할 수 있도록 util 로 빼기

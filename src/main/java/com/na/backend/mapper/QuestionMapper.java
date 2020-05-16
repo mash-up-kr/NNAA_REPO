@@ -36,7 +36,7 @@ public class QuestionMapper {
         return String.valueOf(questionHash);
     }
 
-    public List<QuestionResponseDto> toQuestionResponseDto(List<Question> questions, Map<String, BookmarkQuestionDto> myBookmarks) {
+    public List<QuestionResponseDto> toQuestionResponseDtoList(List<Question> questions, Map<String, BookmarkQuestionDto> myBookmarks) {
         // TODO: 질문이 즐겨찾기의 질문과 동일한지 체크하는 로직 함수로 분리 (list -> list)
         List<QuestionResponseDto> questionsWithBookmarkFlag = new ArrayList<>();
 
@@ -44,9 +44,12 @@ public class QuestionMapper {
             String questionHashCode = makeHashCode(question.getContent(),
                                                    question.getChoices());
 
+            // TODO: null 처리
+            Map<String, String> questionChoices = question.getChoices() == null ? new HashMap<>(): question.getChoices();
+
             QuestionResponseDto questionWithBookmarkFlag = QuestionResponseDto.builder()
                                                                 .content(question.getContent())
-                                                                .choices(question.getChoices())
+                                                                .choices(questionChoices)
                                                                 .type(question.getType())
                                                                 .build();
 
@@ -73,9 +76,11 @@ public class QuestionMapper {
             String questionHashCode = makeHashCode(questionWithoutBookmarkFlag.getContent(),
                                                    questionWithoutBookmarkFlag.getChoices());
 
+            // TODO: null 일 때 빈 {} 로 만들어주는 함수 따로 빼기
+            Map<String, String> questionChoices = questionWithoutBookmarkFlag.getChoices() == null ? new HashMap<>(): questionWithoutBookmarkFlag.getChoices();
             QuestionResponseDto questionWithBookmarkFlag = QuestionResponseDto.builder()
                                                                 .content(questionWithoutBookmarkFlag.getContent())
-                                                                .choices(questionWithoutBookmarkFlag.getChoices())
+                                                                .choices(questionChoices)
                                                                 .type(questionWithoutBookmarkFlag.getType())
                                                                 .build();
 
@@ -89,6 +94,8 @@ public class QuestionMapper {
             questionsWithBookmarkFlag.put(key, questionWithBookmarkFlag);
         }
 
+        Map<String, String> questionnaireAnswers = questionnaire.getAnswers() == null ? new HashMap<>(): questionnaire.getAnswers();
+
         return QuestionnaireResponseDto.builder()
                 .id(questionnaire.getId())
                 .createUserId(questionnaire.getCreateUserId())
@@ -98,7 +105,7 @@ public class QuestionMapper {
                 .completeFlag(questionnaire.getCompleteFlag())
                 .category(questionnaire.getCategory())
                 .questions(questionsWithBookmarkFlag)
-                .answers(questionnaire.getAnswers())
+                .answers(questionnaireAnswers)
                 .createdAt(questionnaire.getCreatedAt())
                 .updatedAt(questionnaire.getUpdatedAt())
                 .answeredAt(questionnaire.getAnsweredAt())
