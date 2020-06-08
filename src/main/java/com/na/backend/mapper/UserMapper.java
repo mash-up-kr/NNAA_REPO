@@ -53,4 +53,12 @@ public class UserMapper {
         return bookmarkQuestions;
     }
 
+    public UserInfoDto toUserInfoDto(User user) {
+
+        return UserInfoDto.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .name(user.getName())
+                .build();
+    }
 }

@@ -1,6 +1,7 @@
 package com.na.backend.entity;
 
 import com.na.backend.dto.BookmarkQuestionDto;
+import com.na.backend.dto.UserInfoDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,7 +24,7 @@ public class User {
     private String provider;
     private String token;
     private Map<String, BookmarkQuestionDto> bookmarks;
-    private List<String> friends;
+    private List<UserInfoDto> friends;
 
     @Builder
     public User(String id,
@@ -35,7 +36,7 @@ public class User {
                 String provider,
                 String token,
                 Map<String, BookmarkQuestionDto> bookmarks,
-                List<String> friends) {
+                List<UserInfoDto> friends) {
         this.id = id;
         this.uid = uid;
         this.email = email;

@@ -155,6 +155,38 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userService.findUsers(name));
     }
 
+    @ApiOperation(value = "친구 등록하기", notes = "id로 내 친구 등록")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "등록할 친구 아이디", paramType = "path", required = true)
+    })
+    @PostMapping(value = "/friend/{id}")
+    public ResponseEntity<Void> addFriend(@PathVariable String id, HttpServletRequest request) {
+        String myId = request.getHeader(HEADER_ID);
+        userService.addFriendById(myId, id);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @ApiOperation(value = "친구 삭제하기", notes = "id로 친구 삭제")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "삭제할 친구 아이디", paramType = "path", required = true)
+    })
+    @DeleteMapping(value = "/friend/{id}")
+    public ResponseEntity<Void> removeFriend(@PathVariable String id, HttpServletRequest request) {
+        String myId = request.getHeader(HEADER_ID);
+        userService.removeFriendById(myId, id);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @ApiOperation(value = "친구 목록 가져오기", notes = "내 친구 목록 가져오기")
+    @GetMapping(value = "/friend")
+    public ResponseEntity<List<UserInfoDto>> getFriendList(HttpServletRequest request) {
+        String myId = request.getHeader(HEADER_ID);
+
+        return ResponseEntity.status(HttpStatus.OK).body(userService.getMyFriends(myId));
+    }
+
     @ApiOperation(value = "즐겨찾기해둔 질문들 보여주기", notes = "질문 고를때 즐겨찾기 질문들 보여주기")
     @GetMapping("/bookmark")
     public ResponseEntity<List<Question>> getBookmarkList(HttpServletRequest request) {
