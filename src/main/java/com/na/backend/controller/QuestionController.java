@@ -1,6 +1,6 @@
 package com.na.backend.controller;
 
-import com.na.backend.dto.*;
+import com.na.backend.dto.QuestionResponseDto;
 import com.na.backend.exception.InvalidCategoryException;
 import com.na.backend.service.QuestionService;
 import io.swagger.annotations.Api;
@@ -10,7 +10,9 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;

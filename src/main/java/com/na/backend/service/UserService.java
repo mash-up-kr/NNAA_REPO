@@ -19,10 +19,12 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.mail.MessagingException;
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -64,6 +66,7 @@ public class UserService {
                 .password(encryptPassword)
                 .salt(salt)
                 .bookmarks(new HashMap<>())
+                .friends(new ArrayList<>())
                 .token(token)
                 .build();
 
@@ -125,20 +128,6 @@ public class UserService {
     }
 
     @Transactional
-    public User addFriendById(String myId, String id) {
-
-        User user = userRepository.findById(myId).orElseThrow(() -> new UnauthorizedException("invalid id"));
-        List<String> userFriends = user.getFriends();
-
-        if (!userFriends.contains(id)) {
-            userFriends.add(id);
-            return userRepository.save(user);
-        } else {
-            throw new AlreadyExistsException("Already added friend");
-        }
-    }
-
-    @Transactional
     public void sendResetPasswordEmail(String email) throws MessagingException, UnsupportedEncodingException {
         // TODO: 유효기한있는 이메일 설정
         //String timeLimit = LocalDateTime.now().toString(); // 유효시간 몇분으로 설정할지..?
@@ -169,6 +158,44 @@ public class UserService {
     private boolean isSocialUser(String uid) {
 
         return userRepository.findByUid(uid).isPresent();
+    }
+
+    public User addFriendById(String myId, String id) {
+        User user = userRepository.findById(myId).get();
+        User friend = userRepository.findById(id).orElseThrow(() -> new UnauthorizedException("invalid friend id"));
+        List<UserInfoDto> userFriends = user.getFriends();
+        Boolean isFriend = userFriends.stream().map(userFriend -> userFriend.getId()).anyMatch(userFriendId -> userFriendId.equals(id));
+
+        if (isFriend) {
+            throw new AlreadyExistsException("Already your friend");
+        } else {
+            // 등록하는 당사자의 친구목록 뿐 아니라 등록당하는 친구의 친구목록에도 나를 추가해야할지..?
+            userFriends.add(userMapper.toUserInfoDto(friend));
+            return userRepository.save(user);
+        }
+    }
+
+    public User removeFriendById(String myId, String id) {
+        User user = userRepository.findById(myId).get();
+        User friend = userRepository.findById(id).orElseThrow(() -> new UnauthorizedException("invalid friend id"));
+        List<UserInfoDto> userFriends = user.getFriends();
+        Boolean isFriend = userFriends.stream().map(userFriend -> userFriend.getId()).anyMatch(userFriendId -> userFriendId.equals(id));
+
+        if (isFriend) {
+            List<UserInfoDto> resultFriends = userFriends.stream()
+                    .filter(userFriend -> !userFriend.getId().equals(id))
+                    .collect(Collectors.toList());
+            user.setFriends(resultFriends);
+            return userRepository.save(user);
+        } else {
+            throw new EntityNotFoundException("Already not your friend!");
+        }
+    }
+
+    public List<UserInfoDto> getMyFriends(String myId) {
+        User user = userRepository.findById(myId).get();
+
+        return user.getFriends();
     }
 
     public List<Question> getUserBookmark(String myId) {
